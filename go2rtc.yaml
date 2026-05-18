@@ -1,0 +1,8 @@
+# Note: HA manages go2rtc streams via its internal API, not this file.
+# This file is kept for documentation purposes only.
+# Streams are derived from each camera entity's stream_source:
+#
+#   camera.192_168_0_10   → http://localhost:8091/stream  (Kinect YOLO MJPEG)
+#   camera.100_72_212_109 → rtsp://100.72.212.109:8554/stream  (Cat Cam)
+#   camera.192_168_0_29   → android_ip_webcam integration
+#   camera.pixel_8_pro_ip_cam → android_ip_webcam integration

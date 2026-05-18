@@ -1,0 +1,858 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.desktop_tablet",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "type": "sections",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/video_feed"
+                  },
+                  "grid_options": {
+                    "columns": 15,
+                    "rows": 4
+                  },
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  }
+                },
+                {
+                  "clock_style": "digital",
+                  "clock_size": "medium",
+                  "show_seconds": false,
+                  "no_background": false,
+                  "type": "clock",
+                  "face_style": "markers",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  }
+                },
+                {
+                  "show_current": true,
+                  "show_forecast": false,
+                  "type": "weather-forecast",
+                  "entity": "weather.forecast_home",
+                  "forecast_type": "daily",
+                  "forecast_slots": 2,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 2
+                  },
+                  "round_temperature": false
+                },
+                {
+                  "type": "thermostat",
+                  "entity": "climate.bay_village",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 3
+                  },
+                  "show_current_as_primary": true
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "scene.feed_cats",
+                  "name": "Feed Cats",
+                  "tap_action": {
+                    "action": "perform-action",
+                    "target": {
+                      "entity_id": "scene.feed_cats"
+                    },
+                    "perform_action": "scene.turn_on",
+                    "data": {}
+                  },
+                  "show_state": false,
+                  "color": "blue-grey",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "device_tracker.pixel_8_pro",
+                  "icon": "mdi:cellphone-wireless",
+                  "name": "Find Phone",
+                  "hold_action": {
+                    "action": "toggle"
+                  },
+                  "icon_height": "40px",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.find_phone",
+                    "target": {}
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Vibration Sensor (Clothes Dryer)"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.vibration_sensor_clothes_dryer"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Clothes Washer"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_boolean.clothes_washer_status",
+                  "name": "Status"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_boolean.clothes_washer_cycle_active",
+                  "name": "Cycle Active"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_boolean.clothes_washer_done_pending_ack",
+                  "name": "Needs Acknowledgment"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.clothes_washer_power_threshold_watts",
+                  "name": "Threshold",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.clothes_washer_on_delay_seconds",
+                  "name": "On Delay"
+                },
+                {
+                  "type": "tile",
+                  "entity": "input_number.clothes_washer_off_delay_seconds",
+                  "name": "Off Delay"
+                },
+                {
+                  "type": "tile",
+                  "entity": "binary_sensor.vibration_sensor_clothes_dryer",
+                  "name": "Vibration Clear Sensor"
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "script.acknowledge_clothes_washer_done",
+                  "name": "Acknowledge Washer",
+                  "icon": "mdi:check-circle",
+                  "show_state": false,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.turn_on",
+                    "target": {
+                      "entity_id": "script.acknowledge_clothes_washer_done"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "header": {
+            "layout": "start",
+            "badges_position": "top",
+            "badges_wrap": "scroll"
+          },
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "person.trent",
+              "tap_action": {
+                "action": "more-info"
+              },
+              "name": {
+                "type": "entity"
+              },
+              "show_entity_picture": false,
+              "icon": "mdi:home-account"
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.pixel_8_pro_battery_level",
+              "name": "Phone",
+              "show_entity_picture": false,
+              "state_content": "state",
+              "tap_action": {
+                "action": "navigate",
+                "navigation_path": "/config/devices/device/85dc1a473fcd8cca2201e0c39f09556b"
+              }
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "binary_sensor.eero_wan_status",
+              "icon": "mdi:web"
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.jetson_orin_nano_last_seen",
+              "name": "Jetson",
+              "show_entity_picture": false,
+              "icon": "mdi:server",
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.jetson_orin_nano_last_seen",
+                  "state": "unavailable"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.jetson_orin_nano_ip_address",
+                      "state": "unavailable"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.vibration_sensor_clothes_dryer_battery",
+              "icon": "mdi:tumble-dryer",
+              "visibility": [
+                {
+                  "condition": "state",
+                  "state": ""
+                },
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.vibration_sensor_clothes_dryer_battery",
+                  "below": 20
+                }
+              ]
+            }
+          ],
+          "background": {
+            "opacity": 33,
+            "alignment": "center",
+            "size": "cover",
+            "repeat": "repeat",
+            "attachment": "fixed"
+          },
+          "cards": [],
+          "subview": false,
+          "show_icon_and_title": false,
+          "icon": "mdi:monitor-dashboard",
+          "max_columns": 2,
+          "dense_section_placement": true
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Extra",
+          "path": "extra",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "entity": "conversation.home_assistant",
+                  "name": "Assist",
+                  "show_entity_picture": false,
+                  "hide_state": true,
+                  "vertical": true,
+                  "tap_action": {
+                    "action": "assist",
+                    "start_listening": true
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "icon_tap_action": {
+                    "action": "assist",
+                    "start_listening": true
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "picture",
+                  "image": "https://radar.weather.gov/ridge/standard/KCLE_loop.gif",
+                  "alt_text": "NOAA Cleveland radar loop",
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "https://radar.weather.gov/station/KCLE/standard"
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 5
+                  }
+                },
+                {
+                  "type": "iframe",
+                  "url": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/video_feed",
+                  "aspect_ratio": "16:9",
+                  "grid_options": {
+                    "columns": 3,
+                    "rows": 2
+                  }
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "title": "Cat Door",
+                  "columns": 2,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 4
+                  },
+                  "cards": [
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Locked",
+                      "icon": "mdi:lock",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_locked",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "In Only",
+                      "icon": "mdi:arrow-right-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_in_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Out Only",
+                      "icon": "mdi:arrow-left-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_out_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Unlocked",
+                      "icon": "mdi:swap-horizontal-bold",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_unlocked",
+                        "target": {}
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "entity": "camera.100_72_212_109",
+                  "show_entity_picture": true,
+                  "vertical": true,
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  },
+                  "double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "camera.play_stream",
+                    "target": {
+                      "entity_id": "camera.100_72_212_109"
+                    },
+                    "data": {
+                      "format": "hls"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  },
+                  "icon_double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "camera.play_stream",
+                    "target": {
+                      "entity_id": "camera.100_72_212_109"
+                    },
+                    "data": {
+                      "format": "hls"
+                    }
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "entity": "camera.100_72_212_109",
+                  "show_entity_picture": true,
+                  "vertical": true,
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  },
+                  "double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "camera.play_stream",
+                    "target": {
+                      "entity_id": "camera.100_72_212_109"
+                    },
+                    "data": {
+                      "format": "hls"
+                    }
+                  },
+                  "icon_tap_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  },
+                  "icon_double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "camera.play_stream",
+                    "target": {
+                      "entity_id": "camera.100_72_212_109"
+                    },
+                    "data": {
+                      "format": "hls"
+                    }
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "tile",
+                  "entity": "scene.feed_cats",
+                  "vertical": false,
+                  "features": [
+                    {
+                      "type": "button",
+                      "action_name": "Feed Cats"
+                    }
+                  ],
+                  "features_position": "bottom"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "New section"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "title": "Cat Door",
+                  "columns": 2,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 4
+                  },
+                  "cards": [
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Locked",
+                      "icon": "mdi:lock",
+                      "show_state": true,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_locked",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "In Only",
+                      "icon": "mdi:arrow-right-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_in_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Out Only",
+                      "icon": "mdi:arrow-left-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_out_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Unlocked",
+                      "icon": "mdi:swap-horizontal-bold",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_unlocked",
+                        "target": {}
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.pi3_ups_battery",
+                  "vertical": false,
+                  "features_position": "bottom"
+                }
+              ]
+            }
+          ],
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.main_desktop_w11_last_seen",
+              "show_entity_picture": false,
+              "name": "Desktop"
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "title": "Power",
+          "path": "power",
+          "icon": "mdi:flash",
+          "max_columns": 2,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Totals",
+                  "heading_style": "title",
+                  "icon": "mdi:chart-line"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_total_power",
+                  "name": "Live Total Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_24h",
+                  "name": "Average Power 24h"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_7d",
+                  "name": "Average Power 7d"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_30d",
+                  "name": "Average Power 30d"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_daily",
+                  "name": "Energy Last Day"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_weekly",
+                  "name": "Energy Last Week"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_monthly",
+                  "name": "Energy Last Month"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Outlet Controls",
+                  "heading_style": "title",
+                  "icon": "mdi:power-socket-us"
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.ac_power_outlet_monitor_1_washing_machine",
+                  "name": "Washer",
+                  "features_position": "bottom",
+                  "features": [
+                    {
+                      "type": "toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.ac_outlet_monitor_2",
+                  "name": "Outlet #2",
+                  "features_position": "bottom",
+                  "features": [
+                    {
+                      "type": "toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.ac_power_outlet_monitor_3",
+                  "name": "Space Heater",
+                  "features_position": "bottom",
+                  "features": [
+                    {
+                      "type": "toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.ac_power_outlet_monitor_4",
+                  "name": "Bathroom Heater",
+                  "features_position": "bottom",
+                  "features": [
+                    {
+                      "type": "toggle"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Washer",
+                  "heading_style": "title",
+                  "icon": "mdi:washing-machine"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_current",
+                  "name": "Current"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_voltage",
+                  "name": "Voltage"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_power_factor",
+                  "name": "Power Factor"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Outlet #2",
+                  "heading_style": "title",
+                  "icon": "mdi:power-socket-us"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_current",
+                  "name": "Current"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_voltage",
+                  "name": "Voltage"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_power_factor",
+                  "name": "Power Factor"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Space Heater",
+                  "heading_style": "title",
+                  "icon": "mdi:radiator"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_current",
+                  "name": "Current"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_voltage",
+                  "name": "Voltage"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_power_factor",
+                  "name": "Power Factor"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Bathroom Heater",
+                  "heading_style": "title",
+                  "icon": "mdi:radiator-disabled"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_current",
+                  "name": "Current"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_voltage",
+                  "name": "Voltage"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_power_factor",
+                  "name": "Power Factor"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,116 @@
+title: Camera Feeds
+views:
+  - title: All Cameras
+    path: cameras
+    icon: mdi:cctv
+    type: masonry
+    badges:
+      - entity: sensor.yolo_cat_last_seen_2s
+        name: "Cat Seen >2s"
+      - entity: binary_sensor.yolo_two_cats_detected
+        name: "Two Cats"
+    cards:
+
+      # ── Kinect YOLO Detection ──────────────────────────────────────────
+      - type: picture-entity
+        entity: camera.192_168_0_10
+        name: "Kinect — YOLO Detection"
+        show_state: false
+        camera_view: live
+        style: |
+          ha-card { border: 2px solid #4CAF50; }
+
+      # ── Cat Cam ────────────────────────────────────────────────────────
+      - type: picture-entity
+        entity: camera.100_72_212_109
+        name: "Cat Cam"
+        show_state: false
+        camera_view: live
+
+      # ── Android IP Webcam 192.168.0.29 ────────────────────────────────
+      - type: picture-entity
+        entity: camera.192_168_0_29
+        name: "IP Cam"
+        show_state: false
+        camera_view: live
+
+      # ── Pixel 8 Pro ───────────────────────────────────────────────────
+      - type: picture-entity
+        entity: camera.pixel_8_pro_ip_cam
+        name: "Pixel 8 Pro Cam"
+        show_state: false
+        camera_view: live
+
+      # ── YOLO Detection Stats ──────────────────────────────────────────
+      - type: entities
+        title: "Kinect YOLO Stats"
+        show_header_toggle: false
+        entities:
+          - entity: sensor.yolo_detection_count
+            name: "Objects Detected"
+            icon: mdi:eye
+          - entity: sensor.yolo_detection_fps
+            name: "Detection FPS"
+            icon: mdi:speedometer
+          - entity: sensor.yolo_detection_source
+            name: "Stream Source"
+            icon: mdi:camera
+          - entity: sensor.yolo_detection_running
+            name: "Detection Running"
+            icon: mdi:play-circle
+          - entity: sensor.yolo_latest_detection_summary
+            name: "Latest Detection"
+            icon: mdi:text-box-search-outline
+          - entity: sensor.yolo_cat_detection_mode
+            name: "Detection Mode"
+          - entity: sensor.yolo_recent_cat_detection_score
+            name: "Recent Cat Score"
+          - entity: sensor.yolo_database_cat_detections
+            name: "Cat Detections In Database"
+            icon: mdi:database
+
+      - type: button
+        name: "Capture YOLO Snapshot"
+        icon: mdi:camera-image
+        tap_action:
+          action: call-service
+          service: script.yolo_capture_snapshot
+          service_data:
+            label: dashboard
+            camera_entity: camera.192_168_0_10
+
+      - type: entities
+        title: "Cat Feed + YOLO Analytics"
+        show_header_toggle: false
+        entities:
+          - entity: input_number.cat_feedings_since_midnight
+            name: "Feedings Today"
+          - entity: sensor.yolo_cat_appearances_today
+            name: "Cat Appearances Today"
+          - entity: sensor.yolo_cat_appearances_after_feed_today
+            name: "Cat Appearances After Feed"
+          - entity: sensor.yolo_feed_to_cat_latency_last
+            name: "Last Feed To Cat Latency"
+          - entity: sensor.yolo_feed_to_cat_latency_mean_7d
+            name: "7 Day Avg Feed To Cat Latency"
+          - entity: sensor.yolo_cat_presence_24h
+            name: "Cat Presence Last 24h"
+          - entity: sensor.yolo_cat_detection_events_24h
+            name: "Cat Detection Events Last 24h"
+          - entity: binary_sensor.yolo_two_cats_detected
+            name: "Two Cats Present"
+          - entity: sensor.yolo_feed_follow_up_status
+            name: "Post Feed Follow-up"
+          - entity: sensor.yolo_last_snapshot
+            name: "Last Snapshot"
+
+      - type: history-graph
+        title: "Cat Feeding Correlation"
+        hours_to_show: 24
+        entities:
+          - entity: binary_sensor.yolo_cat_detected
+            name: "Cat Present"
+          - entity: sensor.yolo_feed_to_cat_latency_last
+            name: "Feed To Cat Latency"
+          - entity: input_number.cat_feedings_since_midnight
+            name: "Feedings Counter"

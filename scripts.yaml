@@ -1,0 +1,264 @@
+find_phone:
+  alias: Find Phone
+  sequence:
+  - action: notify.mobile_app_pixel_8_pro_local
+    data:
+      message: command_ringer_mode
+      data:
+        command: normal
+  - action: notify.mobile_app_pixel_8_pro_local
+    data:
+      message: command_volume_level
+      data:
+        media_stream: alarm_stream
+        command: 7
+  - action: notify.mobile_app_pixel_8_pro_local
+    data:
+      message: TTS
+      data:
+        ttl: 0
+        priority: high
+        media_stream: alarm_stream_max
+        tts_text: Hey! I'm over here! This way!
+  mode: single
+cat_door_locked:
+  alias: Cat Door Locked
+  icon: mdi:lock
+  sequence:
+  - action: rest_command.cat_door_set_locked
+    data: {}
+  mode: single
+cat_door_in_only:
+  alias: Cat Door In Only
+  icon: mdi:arrow-left-bold-circle-outline
+  sequence:
+  - action: rest_command.cat_door_set_in_only
+    data: {}
+  mode: single
+cat_door_out_only:
+  alias: Cat Door Out Only
+  icon: mdi:arrow-right-bold-circle-outline
+  sequence:
+  - action: rest_command.cat_door_set_out_only
+    data: {}
+  mode: single
+cat_door_unlocked:
+  alias: Cat Door Unlocked
+  icon: mdi:swap-horizontal-bold
+  sequence:
+  - action: rest_command.cat_door_set_unlocked
+    data: {}
+  mode: single
+acknowledge_clothes_washer_done:
+  alias: Acknowledge Clothes Washer Done
+  icon: mdi:check-circle
+  sequence:
+  - action: persistent_notification.dismiss
+    data:
+      notification_id: clothes_washer_done
+  - action: input_boolean.turn_off
+    target:
+      entity_id:
+        - input_boolean.clothes_washer_done_pending_ack
+        - input_boolean.clothes_washer_mildewed
+        - input_boolean.clothes_dryer_overdue
+  mode: single
+acknowledge_clothes_dryer_done:
+  alias: Acknowledge Clothes Dryer Done
+  icon: mdi:check-circle
+  sequence:
+  - action: persistent_notification.dismiss
+    data:
+      notification_id: clothes_dryer_done
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.clothes_dryer_done_pending_ack
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.clothes_dryer_wrinkled
+  mode: single
+yolo_capture_snapshot:
+  alias: YOLO Capture Snapshot
+  icon: mdi:camera-image
+  fields:
+    label:
+      name: Label
+      required: false
+      selector:
+        text: {}
+    camera_entity:
+      name: Camera Entity
+      required: false
+      selector:
+        entity:
+          domain: camera
+  sequence:
+  - variables:
+      normalized_label: >-
+        {% set cleaned = (label | default('capture')) | lower | regex_replace('[^a-z0-9]+', '_') | trim('_') %}
+        {{ cleaned if cleaned else 'capture' }}
+      snapshot_file_name: "{{ normalized_label }}_{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+      snapshot_relative_path: "yolo_snapshots/{{ snapshot_file_name }}"
+      snapshot_absolute_path: "/config/www/{{ snapshot_relative_path }}"
+      snapshot_public_path: "/local/{{ snapshot_relative_path }}"
+      camera_target: "{{ camera_entity | default('camera.192_168_0_10') }}"
+  - action: rest_command.yolo_take_service_screenshot
+    data: {}
+  - action: camera.snapshot
+    data:
+      entity_id: "{{ camera_target }}"
+      filename: "{{ snapshot_absolute_path }}"
+  - action: input_datetime.set_datetime
+    target:
+      entity_id: input_datetime.yolo_last_snapshot_at
+    data:
+      datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.yolo_last_snapshot_file
+    data:
+      value: "{{ snapshot_public_path }}"
+  - action: logbook.log
+    data:
+      name: YOLO Snapshot
+      message: "Saved {{ normalized_label }} snapshot to {{ snapshot_public_path }}"
+  mode: queued
+yolo_reset_server:
+  alias: YOLO Reset Server
+  icon: mdi:restart
+  sequence:
+  - action: rest_command.yolo_reset_server
+    data: {}
+  - action: logbook.log
+    data:
+      name: YOLO Server
+      message: Reset requested from Home Assistant
+  mode: single
+cat_feeder_dispense_amount:
+  alias: Cat Feeder Dispense Amount
+  icon: mdi:cat
+  fields:
+    amount:
+      name: Amount
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 12
+          step: 1
+          mode: box
+    source:
+      name: Source
+      required: false
+      selector:
+        text: {}
+  sequence:
+  - variables:
+      request_source: "{{ source | default('Manual') }}"
+      requested_amount: "{{ amount | int(1) }}"
+  - action: input_datetime.set_datetime
+    target:
+      entity_id: input_datetime.cat_feeder_last_request_at
+    data:
+      datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+  - action: input_text.set_value
+    target:
+      entity_id: input_text.cat_feeder_last_request_source
+    data:
+      value: "{{ request_source }}"
+  - choose:
+      - conditions:
+          - condition: state
+            entity_id: binary_sensor.cat_feeder_unavailable
+            state: "on"
+        sequence:
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.cat_feeder_fault_active
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.cat_feeder_fault_reason
+            data:
+              value: "Dispense requested while feeder was unavailable"
+          - action: persistent_notification.create
+            data:
+              notification_id: cat_feeder_fault
+              title: Cat Feeder Needs Attention
+              message: >-
+                {{ request_source }} tried to dispense {{ requested_amount }} portion(s),
+                but the feeder is currently unavailable in Home Assistant.
+    default:
+      - action: number.set_value
+        continue_on_error: true
+        target:
+          entity_id: number.cat_feeder_feed
+        data:
+          value: "{{ requested_amount }}"
+      - delay:
+          seconds: 2
+      - choose:
+          - conditions:
+              - condition: state
+                entity_id: binary_sensor.cat_feeder_unavailable
+                state: "on"
+            sequence:
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.cat_feeder_fault_active
+              - action: input_text.set_value
+                target:
+                  entity_id: input_text.cat_feeder_fault_reason
+                data:
+                  value: "Dispense command failed because the feeder went unavailable"
+              - action: persistent_notification.create
+                data:
+                  notification_id: cat_feeder_fault
+                  title: Cat Feeder Needs Attention
+                  message: >-
+                    {{ request_source }} tried to dispense {{ requested_amount }} portion(s),
+                    but the Tuya feeder did not stay available long enough to confirm the command.
+                    Internet and Tuya cloud access are the most likely causes.
+        default:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.cat_feedings_since_midnight
+            data:
+              value: "{{ states('input_number.cat_feedings_since_midnight') | int(0) + 1 }}"
+          - action: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.cat_feeder_fault_active
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.cat_feeder_fault_reason
+            data:
+              value: ""
+          - action: persistent_notification.dismiss
+            data:
+              notification_id: cat_feeder_fault
+          - action: input_boolean.turn_on
+            target:
+              entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+          - delay:
+              seconds: "{{ states('input_number.yolo_post_feed_snapshot_delay_seconds') | int(8) }}"
+          - action: script.yolo_capture_snapshot
+            continue_on_error: true
+            data:
+              label: "feed_dispensed"
+              camera_entity: camera.192_168_0_10
+  mode: queued
+cat_feeder_add_slot:
+  alias: Cat Feeder Add Slot
+  icon: mdi:playlist-plus
+  sequence:
+  - choose:
+      - conditions:
+          - condition: numeric_state
+            entity_id: input_number.cat_feeder_visible_slots
+            below: 8
+        sequence:
+          - action: input_number.set_value
+            target:
+              entity_id: input_number.cat_feeder_visible_slots
+            data:
+              value: "{{ states('input_number.cat_feeder_visible_slots') | int(4) + 1 }}"
+  mode: single

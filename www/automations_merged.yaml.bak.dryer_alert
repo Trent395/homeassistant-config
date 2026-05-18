@@ -1,0 +1,816 @@
+- id: '1773959749736'
+  alias: test music
+  description: ''
+  triggers:
+    - trigger: event
+      event_type: ''
+  conditions: []
+  actions:
+    - action: media_player.select_source
+      metadata: {}
+      target:
+        device_id: ad0d83266d532efd1a297351157d77e5
+      data: {}
+    - action: media_player.browse_media
+      metadata: {}
+      target:
+        device_id: 42dea375208d844f21257fa17426f0fc
+        entity_id: media_player.xbox_series_x
+      data: {}
+  mode: single
+
+- id: clothes_washer_cycle_started
+  alias: Clothes Washer Cycle Started
+  description: Mark the washer cycle active and reset laundry state for a new wash load.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.clothes_washer_running
+      to: "on"
+      for:
+        minutes: 15
+  conditions: []
+  actions:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.clothes_washer_cycle_active
+    - action: input_boolean.turn_off
+      target:
+        entity_id:
+          - input_boolean.clothes_washer_waiting_for_dryer
+          - input_boolean.clothes_washer_door_opened_since_cycle
+          - input_boolean.clothes_washer_done_pending_ack
+          - input_boolean.clothes_dryer_done_pending_ack
+          - input_boolean.clothes_dryer_wrinkled
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.clothes_dryer_status
+    - action: persistent_notification.dismiss
+      data:
+        notification_id: clothes_washer_done
+    - action: persistent_notification.dismiss
+      data:
+        notification_id: clothes_dryer_done
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.laundry_status
+      data:
+        option: Washing
+  mode: single
+
+- id: clothes_washer_cycle_finished
+  alias: Clothes Washer Cycle Finished
+  description: Notify when the washer finishes and wait for the dryer to start.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.clothes_washer_running
+      to: "off"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.clothes_washer_cycle_active
+      state: "on"
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.clothes_washer_cycle_active
+    - action: input_boolean.turn_on
+      target:
+        entity_id:
+          - input_boolean.clothes_washer_done_pending_ack
+          - input_boolean.clothes_washer_waiting_for_dryer
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.clothes_washer_door_opened_since_cycle
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.clothes_washer_finished_at
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.laundry_status
+      data:
+        option: Waiting For Dryer
+    - action: persistent_notification.create
+      data:
+        notification_id: clothes_washer_done
+        title: Clothes Washer Finished
+        message: >-
+          The clothes washer finished at
+          {{ now().strftime('%-I:%M %p') if now().strftime('%-I:%M %p') else now().strftime('%I:%M %p') }}.
+          Move the load into the dryer and press the washer door helper once the washer has been opened.
+          This alert stays active until a qualifying dryer cycle starts.
+    - action: notify.mobile_app_pixel_8_pro
+      data:
+        title: Clothes Washer Finished
+        message: The washer finished. Move the load to the dryer and press the washer door helper after opening the washer.
+  mode: single
+
+- id: clothes_washer_door_opened_marked
+  alias: Clothes Washer Door Opened Marked
+  description: Record that the washer door was opened after the current wash cycle finished.
+  triggers:
+    - trigger: state
+      entity_id: input_button.clothes_washer_door_opened
+  actions:
+    - if:
+        - condition: state
+          entity_id: input_boolean.clothes_washer_waiting_for_dryer
+          state: "on"
+      then:
+        - action: input_boolean.turn_on
+          target:
+            entity_id: input_boolean.clothes_washer_door_opened_since_cycle
+  mode: single
+
+- id: clothes_washer_waiting_for_dryer_reminder
+  alias: Clothes Washer Waiting For Dryer Reminder
+  description: Repeat the washer reminder until the dryer starts and the washer load has been moved.
+  triggers:
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.clothes_washer_waiting_for_dryer
+      state: "on"
+    - condition: state
+      entity_id: binary_sensor.clothes_dryer_running
+      state: "off"
+    - condition: template
+      value_template: >-
+        {{ (now().minute % (states('input_number.laundry_notification_repeat_minutes') | int(15))) == 0 }}
+  actions:
+    - action: persistent_notification.create
+      data:
+        notification_id: clothes_washer_done
+        title: Clothes Washer Finished
+        message: >-
+          The clothes washer finished at
+          {{ states('input_datetime.clothes_washer_finished_at') if states('input_datetime.clothes_washer_finished_at') not in ['unknown', 'unavailable', 'none', 'None', ''] else now().strftime('%Y-%m-%d %H:%M:%S') }}.
+          This reminder stays active until a dryer cycle starts after the washer door has been opened.
+    - action: notify.mobile_app_pixel_8_pro
+      data:
+        title: Clothes Washer Finished
+        message: The washer load is still waiting for the dryer.
+  mode: single
+
+- id: clothes_dryer_cycle_started
+  alias: Clothes Dryer Cycle Started
+  description: Mark the dryer active and, when appropriate, advance the wash load to drying.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.clothes_dryer_running
+      to: "on"
+    - trigger: homeassistant
+      id: homeassistant_start
+      event: start
+  actions:
+    - choose:
+        - conditions:
+            - condition: trigger
+              id: homeassistant_start
+            - condition: state
+              entity_id: binary_sensor.clothes_dryer_running
+              state: "on"
+          sequence:
+            - action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.clothes_dryer_status
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.laundry_status
+              data:
+                option: Drying
+        - conditions:
+            - condition: not
+              conditions:
+                - condition: trigger
+                  id: homeassistant_start
+          sequence:
+            - action: input_boolean.turn_on
+              target:
+                entity_id: input_boolean.clothes_dryer_status
+            - action: input_boolean.turn_off
+              target:
+                entity_id:
+                  - input_boolean.clothes_dryer_done_pending_ack
+                  - input_boolean.clothes_dryer_wrinkled
+            - action: input_datetime.set_datetime
+              target:
+                entity_id: input_datetime.clothes_dryer_started_at
+              data:
+                datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+            - choose:
+                - conditions:
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_waiting_for_dryer
+                      state: "on"
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_door_opened_since_cycle
+                      state: "on"
+                    - condition: template
+                      value_template: >-
+                        {% set washer_finished = states('input_datetime.clothes_washer_finished_at') %}
+                        {% if washer_finished in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                          false
+                        {% else %}
+                          {{ (as_timestamp(now()) - as_timestamp(washer_finished)) <= (states('input_number.clothes_dryer_start_window_seconds') | int(0)) }}
+                        {% endif %}
+                  sequence:
+                    - action: input_boolean.turn_off
+                      target:
+                        entity_id:
+                          - input_boolean.clothes_washer_waiting_for_dryer
+                          - input_boolean.clothes_washer_done_pending_ack
+                    - action: persistent_notification.dismiss
+                      data:
+                        notification_id: clothes_washer_done
+                    - action: input_select.select_option
+                      target:
+                        entity_id: input_select.laundry_status
+                      data:
+                        option: Drying
+                - conditions:
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_waiting_for_dryer
+                      state: "on"
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_door_opened_since_cycle
+                      state: "on"
+                  sequence:
+                    - action: persistent_notification.create
+                      data:
+                        notification_id: clothes_washer_done
+                        title: Clothes Washer Still Waiting For Dryer
+                        message: >-
+                          The dryer started after the configured handoff window, so this wash cycle is still marked
+                          as waiting for the dryer.
+                    - action: notify.mobile_app_pixel_8_pro
+                      data:
+                        title: Washer Load Still Waiting
+                        message: The dryer started too late to count for the waiting washer load.
+                - conditions:
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_waiting_for_dryer
+                      state: "on"
+                    - condition: state
+                      entity_id: input_boolean.clothes_washer_door_opened_since_cycle
+                      state: "off"
+                  sequence:
+                    - action: persistent_notification.create
+                      data:
+                        notification_id: clothes_washer_done
+                        title: Clothes Washer Still Waiting For Dryer
+                        message: >-
+                          The dryer started, but the wash cycle is still marked as waiting because the washer door
+                          helper has not been pressed yet.
+                    - action: notify.mobile_app_pixel_8_pro
+                      data:
+                        title: Washer Load Still Waiting
+                        message: Press the washer door helper after moving the load so the cycle can advance to drying.
+              default:
+                - action: input_select.select_option
+                  target:
+                    entity_id: input_select.laundry_status
+                  data:
+                    option: Drying
+      default:
+        []
+  mode: single
+
+- id: clothes_dryer_cycle_finished
+  alias: Clothes Dryer Cycle Finished
+  description: Notify when the dryer finishes and wait for the dryer door helper.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.clothes_dryer_running
+      to: "off"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.clothes_dryer_status
+      state: "on"
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.clothes_dryer_status
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.clothes_dryer_done_pending_ack
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.clothes_dryer_finished_at
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.laundry_status
+      data:
+        option: Dryer Finished
+    - action: persistent_notification.create
+      data:
+        notification_id: clothes_dryer_done
+        title: Clothes Dryer Finished
+        message: >-
+          The clothes dryer finished at
+          {{ now().strftime('%-I:%M %p') if now().strftime('%-I:%M %p') else now().strftime('%I:%M %p') }}.
+          This alert stays active until the dryer door helper is pressed.
+    - action: notify.mobile_app_pixel_8_pro
+      data:
+        title: Clothes Dryer Finished
+        message: The dryer finished. Open the dryer and press the dryer door helper.
+  mode: single
+
+- id: clothes_dryer_done_reminder
+  alias: Clothes Dryer Done Reminder
+  description: Repeat the dryer-finished notification until the dryer door helper is pressed.
+  triggers:
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.clothes_dryer_done_pending_ack
+      state: "on"
+    - condition: template
+      value_template: >-
+        {{ (now().minute % (states('input_number.laundry_notification_repeat_minutes') | int(15))) == 0 }}
+  actions:
+    - action: persistent_notification.create
+      data:
+        notification_id: clothes_dryer_done
+        title: Clothes Dryer Finished
+        message: >-
+          The clothes dryer finished at
+          {{ states('input_datetime.clothes_dryer_finished_at') if states('input_datetime.clothes_dryer_finished_at') not in ['unknown', 'unavailable', 'none', 'None', ''] else now().strftime('%Y-%m-%d %H:%M:%S') }}.
+          This reminder stays active until the dryer door helper is pressed.
+    - action: notify.mobile_app_pixel_8_pro
+      data:
+        title: Clothes Dryer Finished
+        message: The dryer load is still waiting to be removed.
+  mode: single
+
+- id: clothes_dryer_done_clear
+  alias: Clothes Dryer Done Clear
+  description: Clear dryer notifications when the dryer door helper is pressed.
+  triggers:
+    - trigger: state
+      entity_id: input_button.clothes_dryer_door_opened
+  actions:
+    - action: script.acknowledge_clothes_dryer_done
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_boolean.clothes_washer_waiting_for_dryer
+              state: "on"
+          sequence:
+            - action: input_select.select_option
+              target:
+                entity_id: input_select.laundry_status
+              data:
+                option: Waiting For Dryer
+      default:
+        - action: input_select.select_option
+          target:
+            entity_id: input_select.laundry_status
+          data:
+            option: Idle
+  mode: single
+
+- id: clothes_dryer_wrinkled
+  alias: Clothes Dryer Wrinkled
+  description: Mark the dryer load wrinkled if it sits too long after the dryer finishes.
+  triggers:
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.clothes_dryer_done_pending_ack
+      state: "on"
+    - condition: template
+      value_template: >-
+        {% set finished_at = states('input_datetime.clothes_dryer_finished_at') %}
+        {% if finished_at in ['unknown', 'unavailable', 'none', 'None', ''] %}
+          false
+        {% else %}
+          {{ (as_timestamp(now()) - as_timestamp(finished_at)) >= (states('input_number.clothes_dryer_wrinkle_delay_seconds') | int(0)) }}
+        {% endif %}
+    - condition: state
+      entity_id: input_boolean.clothes_dryer_wrinkled
+      state: "off"
+  actions:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.clothes_dryer_wrinkled
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.laundry_status
+      data:
+        option: Wrinkled
+    - action: persistent_notification.create
+      data:
+        notification_id: clothes_dryer_done
+        title: Clothes Dryer Finished
+        message: >-
+          The dryer load has been sitting long enough to be considered wrinkled.
+          Open the dryer and press the dryer door helper when the load is handled.
+    - action: notify.mobile_app_pixel_8_pro
+      data:
+        title: Dryer Load Wrinkled
+        message: The dryer load has been sitting too long and is now marked wrinkled.
+  mode: single
+
+- id: cat_feeder_scheduled_feedings
+  alias: Cat Feeder Scheduled Feedings
+  description: Dispense the configured amount for any enabled cat feeder slot that matches the current weekday and minute.
+  triggers:
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.cat_feeder_schedule_enabled
+      state: "on"
+  actions:
+    - variables:
+        weekday: "{{ now().strftime('%A') | lower }}"
+        current_time: "{{ now().strftime('%H:%M') }}"
+    - repeat:
+        count: 8
+        sequence:
+          - variables:
+              slot: "{{ repeat.index }}"
+              slot_time: "{{ states('input_datetime.cat_feeder_slot_' ~ repeat.index ~ '_time') }}"
+          - if:
+              - condition: template
+                value_template: >-
+                  {{ is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_enabled', 'on')
+                    and is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_' ~ weekday, 'on')
+                    and slot_time not in ['unknown', 'unavailable', 'none', 'None', '']
+                    and slot_time[0:5] == current_time }}
+            then:
+              - action: script.cat_feeder_dispense_amount
+                data:
+                  amount: "{{ states('input_number.cat_feeder_slot_' ~ slot ~ '_amount') | int(1) }}"
+                  source: "Schedule slot {{ slot }}"
+  mode: single
+
+- id: cat_feeder_unavailable_alert
+  alias: Cat Feeder Unavailable Alert
+  description: Flag the cat feeder when Home Assistant loses contact with the device.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.cat_feeder_unavailable
+      to: "on"
+      for:
+        minutes: 2
+  conditions: []
+  actions:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.cat_feeder_fault_active
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.cat_feeder_fault_reason
+      data:
+        value: "Feeder device is unavailable in Home Assistant"
+    - action: persistent_notification.create
+      data:
+        notification_id: cat_feeder_fault
+        title: Cat Feeder Needs Attention
+        message: >-
+          The cat feeder has been unavailable in Home Assistant for at least 2 minutes.
+          Check power, Wi-Fi, and the Tuya app for device-side errors.
+  mode: single
+
+- id: cat_feeder_unavailable_clear
+  alias: Cat Feeder Unavailable Clear
+  description: Clear feeder fault state when the device comes back online.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.cat_feeder_unavailable
+      to: "off"
+  conditions: []
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.cat_feeder_fault_active
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.cat_feeder_fault_reason
+      data:
+        value: ""
+    - action: persistent_notification.dismiss
+      data:
+        notification_id: cat_feeder_fault
+  mode: single
+
+- id: cat_feeder_reset_feedings_since_midnight
+  alias: Cat Feeder Reset Feedings Since Midnight
+  description: Reset the running cat feeding counter at midnight.
+  triggers:
+    - trigger: time
+      at: "00:00:00"
+  conditions: []
+  actions:
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.cat_feedings_since_midnight
+      data:
+        value: 0
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.yolo_cat_appearances_today
+      data:
+        value: 0
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.yolo_cat_appearances_after_feed_today
+      data:
+        value: 0
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.cat_feeder_manual_operations_today
+      data:
+        value: 0
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+  mode: single
+
+- id: yolo_latest_detection_class_logged
+  alias: YOLO Latest Detection Class Logged
+  description: Record a logbook entry when the latest YOLO database detection changes class.
+  triggers:
+    - trigger: state
+      entity_id: sensor.yolo_latest_detection_class
+  conditions:
+    - condition: template
+      value_template: >-
+        {{ trigger.to_state is not none
+           and trigger.to_state.state not in ['unknown', 'unavailable', 'none', 'None', '']
+           and (trigger.from_state is none
+                or trigger.from_state.state != trigger.to_state.state) }}
+  actions:
+    - variables:
+        latest_class: "{{ trigger.to_state.state }}"
+        confidence: "{{ states('sensor.yolo_latest_detection_confidence') }}"
+        detected_at: "{{ states('sensor.yolo_latest_detection_timestamp') }}"
+    - action: logbook.log
+      data:
+        name: YOLO Detection
+        entity_id: sensor.yolo_latest_detection_id
+        message: >-
+          {{ latest_class }} detected at {{ detected_at if detected_at not in ['unknown', 'unavailable', 'none', 'None', ''] else now().strftime('%Y-%m-%d %H:%M:%S') }}
+          ({{ confidence }}% confidence)
+  mode: queued
+
+- id: pixel_8_pro_battery_last_real_change
+  alias: Pixel 8 Pro Battery Last Real Change
+  description: Persist the last time the phone battery actually changed value, ignoring restart restores and repeated stale reports.
+  triggers:
+    - trigger: state
+      entity_id: sensor.pixel_8_pro_battery_level
+  conditions:
+    - condition: template
+      value_template: >-
+        {{ trigger.from_state is not none
+           and trigger.to_state is not none
+           and trigger.from_state.state not in ['unknown', 'unavailable', 'none', 'None', '']
+           and trigger.to_state.state not in ['unknown', 'unavailable', 'none', 'None', '']
+           and (trigger.from_state.state | float(-1)) != (trigger.to_state.state | float(-1)) }}
+  actions:
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.pixel_8_pro_battery_last_real_change
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+  mode: queued
+
+- id: yolo_cat_appearance_logged
+  alias: YOLO Cat Appearance Logged
+  description: Record a cat appearance once the YOLO cat detection has remained active long enough to confirm.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.yolo_cat_detected
+      to: "on"
+  conditions: []
+  actions:
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.yolo_cat_last_appearance
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.yolo_cat_appearances_today
+      data:
+        value: "{{ states('input_number.yolo_cat_appearances_today') | int(0) + 1 }}"
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+              state: "on"
+            - condition: template
+              value_template: >-
+                {% set last_request = states('input_datetime.cat_feeder_last_request_at') %}
+                {% if last_request in ['unknown', 'unavailable', 'none', 'None', ''] %}
+                  false
+                {% else %}
+                  {{ (as_timestamp(now()) - as_timestamp(last_request)) <=
+                     (states('input_number.yolo_post_feed_cat_window_minutes') | float(20) * 60) }}
+                {% endif %}
+          sequence:
+            - variables:
+                latency_minutes: >-
+                  {% set last_request = states('input_datetime.cat_feeder_last_request_at') %}
+                  {{ ((as_timestamp(now()) - as_timestamp(last_request)) / 60) | round(1) }}
+            - action: input_datetime.set_datetime
+              target:
+                entity_id: input_datetime.yolo_last_cat_after_feed_at
+              data:
+                datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+            - action: input_number.set_value
+              target:
+                entity_id: input_number.yolo_cat_appearances_after_feed_today
+              data:
+                value: "{{ states('input_number.yolo_cat_appearances_after_feed_today') | int(0) + 1 }}"
+            - action: input_number.set_value
+              target:
+                entity_id: input_number.yolo_feed_to_cat_latency_last_minutes
+              data:
+                value: "{{ latency_minutes }}"
+            - action: script.yolo_capture_snapshot
+              data:
+                label: "cat_after_feed"
+                camera_entity: camera.192_168_0_10
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+            - action: logbook.log
+              data:
+                name: Cat Feeding Follow-up
+                entity_id: binary_sensor.yolo_cat_detected
+                message: "Cat appeared {{ latency_minutes }} minute(s) after feeding"
+  mode: single
+
+- id: yolo_post_feed_follow_up_window_expired
+  alias: YOLO Post Feed Follow-up Window Expired
+  description: Clear the post-feed cat snapshot window if no cat arrives in time.
+  triggers:
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
+    - condition: state
+      entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+      state: "on"
+    - condition: template
+      value_template: >-
+        {% set last_request = states('input_datetime.cat_feeder_last_request_at') %}
+        {% if last_request in ['unknown', 'unavailable', 'none', 'None', ''] %}
+          true
+        {% else %}
+          {{ (as_timestamp(now()) - as_timestamp(last_request)) >
+             (states('input_number.yolo_post_feed_cat_window_minutes') | float(20) * 60) }}
+        {% endif %}
+  actions:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+    - action: logbook.log
+      data:
+        name: Cat Feeding Follow-up
+        entity_id: input_datetime.cat_feeder_last_request_at
+        message: "Post-feed cat snapshot window expired without a confirmed cat appearance"
+  mode: single
+
+- id: yolo_cat_appearance_logged_2s
+  alias: YOLO Cat Appearance Logged 2s
+  description: Record the last time a cat remained detected for at least 2 seconds.
+  triggers:
+    - trigger: state
+      entity_id: binary_sensor.yolo_cat_detected_2s
+      to: "on"
+  conditions: []
+  actions:
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.yolo_cat_last_appearance_2s
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+  mode: queued
+
+- id: cat_feeder_count_scene_feed
+  alias: Cat Feeder Count Scene Feed
+  description: Count manual one-click scene feed activations in the daily feeding helper.
+  triggers:
+    - trigger: state
+      entity_id: scene.feed_cats
+  conditions: []
+  actions:
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.cat_feeder_last_request_at
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - action: input_text.set_value
+      target:
+        entity_id: input_text.cat_feeder_last_request_source
+      data:
+        value: "Tuya scene feed"
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.cat_feedings_since_midnight
+      data:
+        value: "{{ states('input_number.cat_feedings_since_midnight') | int(0) + 1 }}"
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+    - delay:
+        seconds: "{{ states('input_number.yolo_post_feed_snapshot_delay_seconds') | int(8) }}"
+    - action: script.yolo_capture_snapshot
+      data:
+        label: "feed_scene"
+        camera_entity: camera.192_168_0_10
+  mode: queued
+
+- id: cat_feeder_manual_operation_detected
+  alias: Cat Feeder Manual Operation Detected
+  description: Record a feeder dispense report that did not match a recent Home Assistant request.
+  triggers:
+    - trigger: state
+      entity_id: sensor.cat_feeder_last_amount
+  conditions:
+    - condition: template
+      value_template: >-
+        {{ trigger.to_state is not none
+           and trigger.to_state.state not in ['unknown', 'unavailable', 'none', 'None', '']
+           and trigger.from_state is not none
+           and trigger.from_state.state not in ['unknown', 'unavailable', 'none', 'None', '']
+           and trigger.to_state.state != trigger.from_state.state }}
+    - condition: template
+      value_template: >-
+        {% set last_request = states('input_datetime.cat_feeder_last_request_at') %}
+        {% if last_request in ['unknown', 'unavailable', 'none', 'None', ''] %}
+          true
+        {% else %}
+          {{ (as_timestamp(now()) - as_timestamp(last_request)) > 90 }}
+        {% endif %}
+  actions:
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.cat_feeder_last_manual_operation_at
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.cat_feeder_manual_operations_today
+      data:
+        value: "{{ states('input_number.cat_feeder_manual_operations_today') | int(0) + 1 }}"
+    - action: logbook.log
+      data:
+        name: Cat Feeder
+        entity_id: sensor.cat_feeder_last_amount
+        message: "Manual dispense detected: {{ trigger.to_state.state }} portion(s)"
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.yolo_post_feed_cat_snapshot_pending
+    - delay:
+        seconds: "{{ states('input_number.yolo_post_feed_snapshot_delay_seconds') | int(8) }}"
+    - action: script.yolo_capture_snapshot
+      data:
+        label: "feed_manual"
+        camera_entity: camera.192_168_0_10
+  mode: queued
+
+- id: turn_off_space_heaters_when_away
+  alias: Turn Off Space Heaters When Away
+  description: Turn off both space heaters after Trent has been away from home for 5 minutes.
+  triggers:
+    - trigger: state
+      entity_id: sensor.trent_home
+      from: "home"
+      to: "not_home"
+      for:
+        minutes: 5
+  conditions: []
+  actions:
+    - action: switch.turn_off
+      target:
+        entity_id:
+          - switch.ac_power_outlet_monitor_3
+          - switch.ac_power_outlet_monitor_4
+  mode: single
+
+- id: turn_on_outlets_2_and_3_when_home
+  alias: Turn On Outlets 2 and 3 When Home
+  description: Turn outlets 2 and 3 back on when Trent arrives home.
+  triggers:
+    - trigger: state
+      entity_id: sensor.trent_home
+      from: "not_home"
+      to: "home"
+  conditions: []
+  actions:
+    - action: switch.turn_on
+      target:
+        entity_id:
+          - switch.ac_outlet_monitor_2
+          - switch.ac_power_outlet_monitor_3
+  mode: single

@@ -1,0 +1,294 @@
+title: Laundry
+views:
+  - title: Overview
+    path: laundry
+    icon: mdi:washing-machine
+    type: masonry
+    badges:
+      - entity: input_select.laundry_status
+        name: Laundry Status
+      - entity: binary_sensor.clothes_washer_running
+        name: Washer Running
+      - entity: binary_sensor.clothes_dryer_running
+        name: Dryer Running
+      - entity: input_boolean.clothes_dryer_wrinkled
+        name: Wrinkled
+      - entity: input_boolean.clothes_washer_mildewed
+        name: Mildewed
+    cards:
+      - type: entities
+        title: Laundry State
+        show_header_toggle: false
+        entities:
+          - entity: input_select.laundry_status
+            name: Current Status
+          - entity: input_boolean.clothes_washer_cycle_active
+            name: Washer Cycle Active
+          - entity: input_boolean.clothes_washer_waiting_for_dryer
+            name: Waiting For Dryer
+          - entity: input_boolean.clothes_washer_done_pending_ack
+            name: Washer Notification Active
+          - entity: input_boolean.clothes_dryer_status
+            name: Dryer Cycle Active
+          - entity: input_boolean.clothes_dryer_done_pending_ack
+            name: Dryer Notification Active
+          - entity: input_boolean.clothes_dryer_wrinkled
+            name: Dryer Load Wrinkled
+          - entity: input_boolean.clothes_washer_mildewed
+            name: Washer Load Mildewed
+          - entity: input_boolean.clothes_washer_door_opened_since_cycle
+            name: Washer Door Marked Open
+
+      - type: glance
+        title: Machine Sensors
+        columns: 2
+        entities:
+          - entity: binary_sensor.clothes_washer_running
+            name: Washer Running
+          - entity: binary_sensor.clothes_dryer_running
+            name: Dryer Running
+
+      - type: gauge
+        entity: sensor.ac_power_outlet_monitor_1_washing_machine_power
+        name: Washer Power
+        min: 0
+        max: 1500
+        severity:
+          green: 0
+          yellow: 10
+          red: 500
+
+      - type: entities
+        title: Washer Telemetry
+        show_header_toggle: false
+        entities:
+          - entity: sensor.ac_power_outlet_monitor_1_washing_machine_power
+            name: Live Power
+          - entity: sensor.ac_power_outlet_monitor_1_washing_machine_summation_delivered
+            name: Total Energy
+          - entity: input_datetime.clothes_washer_finished_at
+            name: Last Washer Finish
+          - entity: input_number.clothes_washer_power_threshold_watts
+            name: Washer Power Threshold
+          - entity: input_number.clothes_washer_on_delay_seconds
+            name: Washer On Delay
+          - entity: input_number.clothes_washer_off_delay_seconds
+            name: Washer Off Delay
+
+      - type: entities
+        title: Dryer Telemetry
+        show_header_toggle: false
+        entities:
+          - entity: binary_sensor.clothes_dryer_running
+            name: Dryer Running
+          - entity: input_datetime.clothes_dryer_started_at
+            name: Last Dryer Start
+          - entity: input_datetime.clothes_dryer_finished_at
+            name: Last Dryer Finish
+          - entity: input_number.clothes_dryer_on_delay_seconds
+            name: Dryer On Delay
+          - entity: input_number.clothes_dryer_off_delay_seconds
+            name: Dryer Off Delay
+
+      - type: entities
+        title: Manual Actions
+        show_header_toggle: false
+        entities:
+          - entity: input_button.clothes_washer_door_opened
+            name: Mark Washer Door Opened
+          - entity: input_button.clothes_dryer_door_opened
+            name: Mark Dryer Door Opened
+          - entity: script.acknowledge_clothes_washer_done
+            name: Acknowledge Washer Done
+          - entity: script.acknowledge_clothes_dryer_done
+            name: Acknowledge Dryer Done
+
+      - type: conditional
+        conditions:
+          - entity: input_boolean.clothes_washer_waiting_for_dryer
+            state: "on"
+        card:
+          type: markdown
+          title: Washer Waiting
+          content: >
+            The washer load is waiting for the dryer.
+
+            1. Open the washer.
+            2. Press **Mark Washer Door Opened**.
+            3. Start the dryer.
+
+      - type: conditional
+        conditions:
+          - entity: input_boolean.clothes_washer_mildewed
+            state: "on"
+        card:
+          type: markdown
+          title: Mildewed Load
+          content: >
+            The washer load sat too long without the dryer starting. Rewash this
+            load before drying it.
+
+      - type: conditional
+        conditions:
+          - entity: input_boolean.clothes_dryer_done_pending_ack
+            state: "on"
+        card:
+          type: markdown
+          title: Dryer Finished
+          content: >
+            The dryer has finished. Fold it now, or press
+            **Mark Dryer Door Opened** after unloading.
+
+      - type: conditional
+        conditions:
+          - entity: input_boolean.clothes_dryer_wrinkled
+            state: "on"
+        card:
+          type: markdown
+          title: Wrinkled Load
+          content: >
+            This load is marked **wrinkled** because it sat in the dryer too long
+            after the cycle ended.
+
+  - title: Controls
+    path: laundry-controls
+    icon: mdi:tune-vertical
+    type: masonry
+    cards:
+      - type: entities
+        title: Washer Detection Tuning
+        show_header_toggle: false
+        entities:
+          - entity: input_number.clothes_washer_power_threshold_watts
+            name: Power Threshold
+          - entity: input_number.clothes_washer_on_delay_seconds
+            name: Running Delay On
+          - entity: input_number.clothes_washer_off_delay_seconds
+            name: Running Delay Off
+          - entity: binary_sensor.clothes_washer_running
+            name: Derived Washer Running
+          - entity: sensor.ac_power_outlet_monitor_1_washing_machine_power
+            name: Current Washer Power
+
+      - type: entities
+        title: Dryer Detection Tuning
+        show_header_toggle: false
+        entities:
+          - entity: input_number.clothes_dryer_on_delay_seconds
+            name: Running Delay On
+          - entity: input_number.clothes_dryer_off_delay_seconds
+            name: Running Delay Off
+          - entity: binary_sensor.clothes_dryer_running
+            name: Dryer Running
+
+      - type: entities
+        title: Workflow Timing
+        show_header_toggle: false
+        entities:
+          - entity: input_number.clothes_dryer_start_window_seconds
+            name: Washer To Dryer Handoff Window
+          - entity: input_number.clothes_washer_mildew_delay_minutes
+            name: Wet Load Mildew Timeout
+          - entity: input_number.clothes_dryer_wrinkle_delay_seconds
+            name: Wrinkle Timeout
+
+      - type: entities
+        title: Lifecycle Helpers
+        show_header_toggle: false
+        entities:
+          - entity: input_select.laundry_status
+            name: Overall Laundry Status
+          - entity: input_boolean.clothes_washer_cycle_active
+            name: Washer Cycle Active
+          - entity: input_boolean.clothes_washer_waiting_for_dryer
+            name: Waiting For Dryer
+          - entity: input_boolean.clothes_washer_door_opened_since_cycle
+            name: Washer Door Opened
+          - entity: input_boolean.clothes_dryer_status
+            name: Dryer Active
+          - entity: input_boolean.clothes_dryer_done_pending_ack
+            name: Dryer Done Pending Ack
+          - entity: input_boolean.clothes_dryer_wrinkled
+            name: Wrinkled
+          - entity: input_boolean.clothes_washer_mildewed
+            name: Mildewed
+
+      - type: button
+        name: Mark Washer Door Opened
+        icon: mdi:door-open
+        tap_action:
+          action: call-service
+          service: input_button.press
+          target:
+            entity_id: input_button.clothes_washer_door_opened
+
+      - type: button
+        name: Mark Dryer Door Opened
+        icon: mdi:door-open
+        tap_action:
+          action: call-service
+          service: input_button.press
+          target:
+            entity_id: input_button.clothes_dryer_door_opened
+
+      - type: button
+        name: Clear Washer Reminder
+        icon: mdi:check-circle
+        tap_action:
+          action: call-service
+          service: script.acknowledge_clothes_washer_done
+
+      - type: button
+        name: Clear Dryer Reminder
+        icon: mdi:check-circle
+        tap_action:
+          action: call-service
+          service: script.acknowledge_clothes_dryer_done
+
+  - title: History
+    path: laundry-history
+    icon: mdi:chart-line
+    type: masonry
+    cards:
+      - type: history-graph
+        title: Laundry Activity
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - entity: binary_sensor.clothes_washer_running
+            name: Washer Running
+          - entity: binary_sensor.clothes_dryer_running
+            name: Dryer Running
+          - entity: input_boolean.clothes_washer_waiting_for_dryer
+            name: Waiting For Dryer
+          - entity: input_boolean.clothes_dryer_done_pending_ack
+            name: Dryer Done Pending Ack
+
+      - type: history-graph
+        title: Washer Power
+        hours_to_show: 24
+        refresh_interval: 60
+        entities:
+          - entity: sensor.ac_power_outlet_monitor_1_washing_machine_power
+            name: Washer Power
+
+      - type: entities
+        title: Timestamps
+        show_header_toggle: false
+        entities:
+          - entity: input_datetime.clothes_washer_finished_at
+            name: Washer Finished At
+          - entity: input_datetime.clothes_dryer_started_at
+            name: Dryer Started At
+          - entity: input_datetime.clothes_dryer_finished_at
+            name: Dryer Finished At
+
+      - type: logbook
+        title: Laundry Logbook
+        hours_to_show: 48
+        entities:
+          - binary_sensor.clothes_washer_running
+          - binary_sensor.clothes_dryer_running
+          - input_select.laundry_status
+          - input_boolean.clothes_dryer_wrinkled
+          - input_boolean.clothes_washer_mildewed

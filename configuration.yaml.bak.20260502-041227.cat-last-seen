@@ -1,0 +1,1263 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+homeassistant:
+  auth_providers:
+    - type: trusted_networks
+      trusted_networks:
+        - 100.66.39.80/32
+      trusted_users:
+        100.66.39.80/32: 4aefec330c094c0ab6d9330119b02497
+      allow_bypass_login: true
+    - type: homeassistant
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+lovelace:
+  resources:
+    - url: /local/mini-media-player-bundle.js?v=1.16.11
+      type: module
+  dashboards:
+    laundry-dashboard:
+      mode: yaml
+      title: Laundry
+      icon: mdi:washing-machine
+      show_in_sidebar: true
+      require_admin: false
+      filename: dashboards/laundry.yaml
+
+automation: !include www/automations_merged.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+input_boolean:
+  clothes_dryer_status:
+    name: Clothes Dryer Status
+    icon: mdi:tumble-dryer
+  clothes_washer_waiting_for_dryer:
+    name: Clothes Washer Waiting For Dryer
+    icon: mdi:washing-machine-alert
+  clothes_washer_cycle_active:
+    name: Clothes Washer Cycle Active
+    icon: mdi:washing-machine-alert
+  clothes_washer_door_opened_since_cycle:
+    name: Clothes Washer Door Opened Since Cycle
+    icon: mdi:door-open
+  clothes_washer_done_pending_ack:
+    name: Clothes Washer Done Pending Acknowledgment
+    icon: mdi:bell-ring
+  clothes_dryer_done_pending_ack:
+    name: Clothes Dryer Done Pending Acknowledgment
+    icon: mdi:bell-ring
+  clothes_dryer_wrinkled:
+    name: Clothes Dryer Wrinkled
+    icon: mdi:iron-outline
+  clothes_dryer_overdue:
+    name: Clothes Dryer Overdue
+    icon: mdi:tumble-dryer-alert
+  cat_feeder_schedule_enabled:
+    name: Cat Feeder Schedule Enabled
+    icon: mdi:calendar-clock
+  cat_feeder_fault_active:
+    name: Cat Feeder Fault Active
+    icon: mdi:alert-circle
+  yolo_post_feed_cat_snapshot_pending:
+    name: YOLO Post Feed Cat Snapshot Pending
+    icon: mdi:camera-clock
+  cat_feeder_slot_1_enabled:
+    name: Cat Feeder Slot 1 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_1_monday:
+    name: Cat Feeder Slot 1 Monday
+  cat_feeder_slot_1_tuesday:
+    name: Cat Feeder Slot 1 Tuesday
+  cat_feeder_slot_1_wednesday:
+    name: Cat Feeder Slot 1 Wednesday
+  cat_feeder_slot_1_thursday:
+    name: Cat Feeder Slot 1 Thursday
+  cat_feeder_slot_1_friday:
+    name: Cat Feeder Slot 1 Friday
+  cat_feeder_slot_1_saturday:
+    name: Cat Feeder Slot 1 Saturday
+  cat_feeder_slot_1_sunday:
+    name: Cat Feeder Slot 1 Sunday
+  cat_feeder_slot_2_enabled:
+    name: Cat Feeder Slot 2 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_2_monday:
+    name: Cat Feeder Slot 2 Monday
+  cat_feeder_slot_2_tuesday:
+    name: Cat Feeder Slot 2 Tuesday
+  cat_feeder_slot_2_wednesday:
+    name: Cat Feeder Slot 2 Wednesday
+  cat_feeder_slot_2_thursday:
+    name: Cat Feeder Slot 2 Thursday
+  cat_feeder_slot_2_friday:
+    name: Cat Feeder Slot 2 Friday
+  cat_feeder_slot_2_saturday:
+    name: Cat Feeder Slot 2 Saturday
+  cat_feeder_slot_2_sunday:
+    name: Cat Feeder Slot 2 Sunday
+  cat_feeder_slot_3_enabled:
+    name: Cat Feeder Slot 3 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_3_monday:
+    name: Cat Feeder Slot 3 Monday
+  cat_feeder_slot_3_tuesday:
+    name: Cat Feeder Slot 3 Tuesday
+  cat_feeder_slot_3_wednesday:
+    name: Cat Feeder Slot 3 Wednesday
+  cat_feeder_slot_3_thursday:
+    name: Cat Feeder Slot 3 Thursday
+  cat_feeder_slot_3_friday:
+    name: Cat Feeder Slot 3 Friday
+  cat_feeder_slot_3_saturday:
+    name: Cat Feeder Slot 3 Saturday
+  cat_feeder_slot_3_sunday:
+    name: Cat Feeder Slot 3 Sunday
+  cat_feeder_slot_4_enabled:
+    name: Cat Feeder Slot 4 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_4_monday:
+    name: Cat Feeder Slot 4 Monday
+  cat_feeder_slot_4_tuesday:
+    name: Cat Feeder Slot 4 Tuesday
+  cat_feeder_slot_4_wednesday:
+    name: Cat Feeder Slot 4 Wednesday
+  cat_feeder_slot_4_thursday:
+    name: Cat Feeder Slot 4 Thursday
+  cat_feeder_slot_4_friday:
+    name: Cat Feeder Slot 4 Friday
+  cat_feeder_slot_4_saturday:
+    name: Cat Feeder Slot 4 Saturday
+  cat_feeder_slot_4_sunday:
+    name: Cat Feeder Slot 4 Sunday
+  cat_feeder_slot_5_enabled:
+    name: Cat Feeder Slot 5 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_5_monday:
+    name: Cat Feeder Slot 5 Monday
+  cat_feeder_slot_5_tuesday:
+    name: Cat Feeder Slot 5 Tuesday
+  cat_feeder_slot_5_wednesday:
+    name: Cat Feeder Slot 5 Wednesday
+  cat_feeder_slot_5_thursday:
+    name: Cat Feeder Slot 5 Thursday
+  cat_feeder_slot_5_friday:
+    name: Cat Feeder Slot 5 Friday
+  cat_feeder_slot_5_saturday:
+    name: Cat Feeder Slot 5 Saturday
+  cat_feeder_slot_5_sunday:
+    name: Cat Feeder Slot 5 Sunday
+  cat_feeder_slot_6_enabled:
+    name: Cat Feeder Slot 6 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_6_monday:
+    name: Cat Feeder Slot 6 Monday
+  cat_feeder_slot_6_tuesday:
+    name: Cat Feeder Slot 6 Tuesday
+  cat_feeder_slot_6_wednesday:
+    name: Cat Feeder Slot 6 Wednesday
+  cat_feeder_slot_6_thursday:
+    name: Cat Feeder Slot 6 Thursday
+  cat_feeder_slot_6_friday:
+    name: Cat Feeder Slot 6 Friday
+  cat_feeder_slot_6_saturday:
+    name: Cat Feeder Slot 6 Saturday
+  cat_feeder_slot_6_sunday:
+    name: Cat Feeder Slot 6 Sunday
+  cat_feeder_slot_7_enabled:
+    name: Cat Feeder Slot 7 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_7_monday:
+    name: Cat Feeder Slot 7 Monday
+  cat_feeder_slot_7_tuesday:
+    name: Cat Feeder Slot 7 Tuesday
+  cat_feeder_slot_7_wednesday:
+    name: Cat Feeder Slot 7 Wednesday
+  cat_feeder_slot_7_thursday:
+    name: Cat Feeder Slot 7 Thursday
+  cat_feeder_slot_7_friday:
+    name: Cat Feeder Slot 7 Friday
+  cat_feeder_slot_7_saturday:
+    name: Cat Feeder Slot 7 Saturday
+  cat_feeder_slot_7_sunday:
+    name: Cat Feeder Slot 7 Sunday
+  cat_feeder_slot_8_enabled:
+    name: Cat Feeder Slot 8 Enabled
+    icon: mdi:clock-outline
+  cat_feeder_slot_8_monday:
+    name: Cat Feeder Slot 8 Monday
+  cat_feeder_slot_8_tuesday:
+    name: Cat Feeder Slot 8 Tuesday
+  cat_feeder_slot_8_wednesday:
+    name: Cat Feeder Slot 8 Wednesday
+  cat_feeder_slot_8_thursday:
+    name: Cat Feeder Slot 8 Thursday
+  cat_feeder_slot_8_friday:
+    name: Cat Feeder Slot 8 Friday
+  cat_feeder_slot_8_saturday:
+    name: Cat Feeder Slot 8 Saturday
+  cat_feeder_slot_8_sunday:
+    name: Cat Feeder Slot 8 Sunday
+
+input_number:
+  clothes_washer_power_threshold_watts:
+    name: Clothes Washer Power Threshold
+    icon: mdi:flash
+    min: 0
+    max: 5000
+    step: 1
+    unit_of_measurement: W
+    mode: box
+    initial: 10
+  clothes_washer_on_delay_seconds:
+    name: Clothes Washer On Delay
+    icon: mdi:timer-play
+    min: 0
+    max: 1800
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 20
+  clothes_washer_off_delay_seconds:
+    name: Clothes Washer Off Delay
+    icon: mdi:timer-stop
+    min: 0
+    max: 7200
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 120
+  clothes_dryer_on_delay_seconds:
+    name: Clothes Dryer On Delay
+    icon: mdi:timer-play
+    min: 0
+    max: 1800
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 15
+  clothes_dryer_off_delay_seconds:
+    name: Clothes Dryer Off Delay
+    icon: mdi:timer-stop
+    min: 0
+    max: 7200
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 120
+  clothes_dryer_start_window_seconds:
+    name: Clothes Dryer Start Window
+    icon: mdi:timeline-clock
+    min: 0
+    max: 43200
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 7200
+  clothes_dryer_wrinkle_delay_seconds:
+    name: Clothes Dryer Wrinkle Delay
+    icon: mdi:iron
+    min: 0
+    max: 86400
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 7200
+  laundry_notification_repeat_minutes:
+    name: Laundry Notification Repeat
+    icon: mdi:bell-ring-outline
+    min: 1
+    max: 120
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 15
+  dryer_start_alert_minutes:
+    name: Dryer Start Alert Minutes
+    icon: mdi:timer-alert
+    min: 1
+    max: 120
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 15
+  cat_feedings_since_midnight:
+    name: Cat Feedings Since Midnight
+    icon: mdi:counter
+    min: 0
+    max: 50
+    step: 1
+    mode: box
+  cat_feeder_visible_slots:
+    name: Cat Feeder Visible Slots
+    icon: mdi:playlist-plus
+    min: 4
+    max: 8
+    step: 1
+    mode: box
+    initial: 4
+  cat_feeder_mass_per_portion_grams:
+    name: Cat Feeder Mass Per Portion
+    icon: mdi:weight-gram
+    min: 0.1
+    max: 100
+    step: 0.1
+    mode: box
+    unit_of_measurement: g
+    initial: 5
+  cat_feeder_number_of_cats:
+    name: Cat Feeder Number Of Cats
+    icon: mdi:cat
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    initial: 2
+  cat_feeder_manual_operations_today:
+    name: Cat Feeder Manual Operations Today
+    icon: mdi:counter
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+  yolo_cat_presence_confirm_seconds:
+    name: YOLO Cat Presence Confirm Seconds
+    icon: mdi:timer-check
+    min: 1
+    max: 300
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 10
+  yolo_cat_absence_clear_seconds:
+    name: YOLO Cat Absence Clear Seconds
+    icon: mdi:timer-remove
+    min: 0
+    max: 300
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 5
+  yolo_cat_appearances_today:
+    name: YOLO Cat Appearances Today
+    icon: mdi:counter
+    min: 0
+    max: 500
+    step: 1
+    mode: box
+  yolo_post_feed_snapshot_delay_seconds:
+    name: YOLO Post Feed Snapshot Delay
+    icon: mdi:timer-outline
+    min: 0
+    max: 300
+    step: 1
+    unit_of_measurement: s
+    mode: box
+    initial: 8
+  yolo_post_feed_cat_window_minutes:
+    name: YOLO Post Feed Cat Window
+    icon: mdi:timeline-clock-outline
+    min: 1
+    max: 240
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 20
+  yolo_cat_appearances_after_feed_today:
+    name: YOLO Cat Appearances After Feed Today
+    icon: mdi:cat
+    min: 0
+    max: 500
+    step: 1
+    mode: box
+  yolo_feed_to_cat_latency_last_minutes:
+    name: YOLO Feed To Cat Latency Last
+    icon: mdi:timer-sand
+    min: 0
+    max: 720
+    step: 0.1
+    unit_of_measurement: min
+    mode: box
+  cat_feeder_slot_1_amount:
+    name: Cat Feeder Slot 1 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_2_amount:
+    name: Cat Feeder Slot 2 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_3_amount:
+    name: Cat Feeder Slot 3 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_4_amount:
+    name: Cat Feeder Slot 4 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_5_amount:
+    name: Cat Feeder Slot 5 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_6_amount:
+    name: Cat Feeder Slot 6 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_7_amount:
+    name: Cat Feeder Slot 7 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+  cat_feeder_slot_8_amount:
+    name: Cat Feeder Slot 8 Amount
+    icon: mdi:bowl
+    min: 1
+    max: 12
+    step: 1
+    mode: box
+    unit_of_measurement: portions
+    initial: 1
+
+input_datetime:
+  clothes_washer_finished_at:
+    name: Clothes Washer Finished At
+    has_date: true
+    has_time: true
+  clothes_dryer_started_at:
+    name: Clothes Dryer Started At
+    has_date: true
+    has_time: true
+  clothes_dryer_finished_at:
+    name: Clothes Dryer Finished At
+    has_date: true
+    has_time: true
+  pixel_8_pro_battery_last_real_change:
+    name: Pixel 8 Pro Battery Last Real Change
+    has_date: true
+    has_time: true
+  yolo_cat_last_appearance_2s:
+    name: YOLO Cat Last Appearance 2s
+    has_date: true
+    has_time: true
+  yolo_two_cats_last_appearance:
+    name: YOLO Two Cats Last Appearance
+    has_date: true
+    has_time: true
+  yolo_cat_last_appearance:
+    name: YOLO Cat Last Appearance
+    has_date: true
+    has_time: true
+  yolo_last_cat_after_feed_at:
+    name: YOLO Last Cat After Feed At
+    has_date: true
+    has_time: true
+  yolo_last_snapshot_at:
+    name: YOLO Last Snapshot At
+    has_date: true
+    has_time: true
+  cat_feeder_last_request_at:
+    name: Cat Feeder Last Request At
+    has_date: true
+    has_time: true
+  cat_feeder_last_manual_operation_at:
+    name: Cat Feeder Last Manual Operation At
+    has_date: true
+    has_time: true
+  cat_feeder_slot_1_time:
+    name: Cat Feeder Slot 1 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_2_time:
+    name: Cat Feeder Slot 2 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_3_time:
+    name: Cat Feeder Slot 3 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_4_time:
+    name: Cat Feeder Slot 4 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_5_time:
+    name: Cat Feeder Slot 5 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_6_time:
+    name: Cat Feeder Slot 6 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_7_time:
+    name: Cat Feeder Slot 7 Time
+    has_date: false
+    has_time: true
+  cat_feeder_slot_8_time:
+    name: Cat Feeder Slot 8 Time
+    has_date: false
+    has_time: true
+
+input_text:
+  cat_feeder_last_request_source:
+    name: Cat Feeder Last Request Source
+    max: 255
+  cat_feeder_fault_reason:
+    name: Cat Feeder Fault Reason
+    max: 255
+  yolo_last_snapshot_file:
+    name: YOLO Last Snapshot File
+    max: 255
+
+input_select:
+  laundry_status:
+    name: Laundry Status
+    icon: mdi:washing-machine
+    options:
+      - Idle
+      - Washing
+      - Waiting For Dryer
+      - Drying
+      - Dryer Finished
+      - Wrinkled
+
+input_button:
+  clothes_washer_door_opened:
+    name: Clothes Washer Door Opened
+    icon: mdi:door-open
+  clothes_dryer_door_opened:
+    name: Clothes Dryer Door Opened
+    icon: mdi:door-open
+
+rest_command:
+  cat_door_set_locked:
+    url: http://192.168.0.10:8080/position?p=0
+    method: POST
+  cat_door_set_in_only:
+    url: http://192.168.0.10:8080/position?p=1
+    method: POST
+  cat_door_set_out_only:
+    url: http://192.168.0.10:8080/position?p=2
+    method: POST
+  cat_door_set_unlocked:
+    url: http://192.168.0.10:8080/position?p=3
+    method: POST
+  yolo_take_service_screenshot:
+    url: http://192.168.0.10:5000/screenshot
+    method: POST
+    content_type: "application/json; charset=utf-8"
+    payload: "{}"
+  yolo_reset_server:
+    url: http://192.168.0.10:5000/reset
+    method: POST
+    content_type: "application/json; charset=utf-8"
+    payload: "{}"
+
+stream:
+
+# ── Kinect v2 / YOLO Detection ────────────────────────────────────────────────
+# Camera entity added via UI (Generic Camera, entry: 192_168_0_10).
+# Stream: http://192.168.0.10:5000/video_feed  Snapshot: http://192.168.0.10:5000/multiview/current.jpg
+# Active source is currently the Pi HLS feed via the Jetson YOLO server.
+
+rest:
+  - resource: http://192.168.0.10:5000/stats
+    scan_interval: 5
+    sensor:
+      - name: "YOLO Detection Count"
+        unique_id: yolo_detection_count
+        value_template: "{{ value_json.detections }}"
+        state_class: measurement
+        icon: mdi:eye
+      - name: "YOLO Detection FPS"
+        unique_id: yolo_detection_fps
+        value_template: "{{ value_json.fps }}"
+        unit_of_measurement: "fps"
+        state_class: measurement
+        icon: mdi:speedometer
+      - name: "YOLO Detection Source"
+        unique_id: yolo_detection_source
+        value_template: "{{ value_json.camera_source }}"
+        icon: mdi:camera
+      - name: "YOLO Detection Running"
+        unique_id: yolo_detection_running
+        value_template: "{{ value_json.is_running }}"
+        icon: mdi:play-circle
+  - resource: http://192.168.0.10:5000/stats/tracking/current
+    scan_interval: 5
+    sensor:
+      - name: "YOLO Current Track Count"
+        unique_id: yolo_current_track_count
+        value_template: "{{ value_json.track_count | int(0) }}"
+        icon: mdi:target-account
+        json_attributes:
+          - tracking_enabled
+          - active_tracks
+  - resource: http://192.168.0.10:5000/database/stats
+    scan_interval: 60
+    sensor:
+      - name: "YOLO Database Total Detections"
+        unique_id: yolo_database_total_detections
+        value_template: "{{ value_json.total_detections | int(0) }}"
+        icon: mdi:database-search
+        state_class: total
+      - name: "YOLO Database Total Frames"
+        unique_id: yolo_database_total_frames
+        value_template: "{{ value_json.total_frames | int(0) }}"
+        icon: mdi:filmstrip
+        state_class: total
+      - name: "YOLO Database Cat Detections"
+        unique_id: yolo_database_cat_detections
+        value_template: "{{ value_json.detections_by_class.cat | default(0) | int(0) }}"
+        icon: mdi:cat
+        state_class: total
+  - resource: http://192.168.0.10:5000/database/recent_detections?limit=1
+    scan_interval: 5
+    sensor:
+      - name: "YOLO Latest Detection ID"
+        unique_id: yolo_latest_detection_id
+        value_template: >-
+          {% if value_json | count > 0 %}
+            {{ value_json[0].id }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:identifier
+      - name: "YOLO Latest Detection Class"
+        unique_id: yolo_latest_detection_class
+        value_template: >-
+          {% if value_json | count > 0 %}
+            {{ value_json[0].class_name }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:tag-search
+      - name: "YOLO Latest Detection Confidence"
+        unique_id: yolo_latest_detection_confidence
+        value_template: >-
+          {% if value_json | count > 0 %}
+            {{ (value_json[0].confidence | float(0) * 100) | round(1) }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "%"
+        icon: mdi:percent-circle
+      - name: "YOLO Latest Detection Timestamp"
+        unique_id: yolo_latest_detection_timestamp
+        value_template: >-
+          {% if value_json | count > 0 %}
+            {{ value_json[0].timestamp }}
+          {% else %}
+            {{ none }}
+          {% endif %}
+        device_class: timestamp
+        icon: mdi:clock-outline
+      - name: "YOLO Latest Detection Track ID"
+        unique_id: yolo_latest_detection_track_id
+        value_template: >-
+          {% if value_json | count > 0 and value_json[0].track_id is not none %}
+            {{ value_json[0].track_id }}
+          {% else %}
+            unknown
+          {% endif %}
+        icon: mdi:target-account
+  - resource: http://192.168.0.10:5000/database/recent_detections?limit=25
+    scan_interval: 5
+    sensor:
+      - name: "YOLO Recent Cat Detection Score"
+        unique_id: yolo_recent_cat_detection_score
+        unit_of_measurement: "pts"
+        icon: mdi:chart-timeline-variant
+        value_template: >-
+          {% set window_seconds = 45 %}
+          {% set now_ts = as_timestamp(now()) %}
+          {% set ns = namespace(score=0.0) %}
+          {% for detection in value_json if detection.class_name == 'cat' %}
+            {% set age_seconds = now_ts - as_timestamp(detection.timestamp) %}
+            {% if age_seconds >= 0 and age_seconds <= window_seconds %}
+              {% set confidence = detection.confidence | float(0) %}
+              {% set confidence_weight = ((confidence - 0.35) / 0.35) | float(0) %}
+              {% if confidence_weight > 0 %}
+                {% set recency_weight = ((window_seconds - age_seconds) / window_seconds) | float(0) %}
+                {% set ns.score = ns.score + (confidence_weight * recency_weight * 10) %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.score | round(2) }}
+      - name: "YOLO Recent Cat Detection Count"
+        unique_id: yolo_recent_cat_detection_count
+        unit_of_measurement: "detections"
+        icon: mdi:counter
+        value_template: >-
+          {% set window_seconds = 45 %}
+          {% set now_ts = as_timestamp(now()) %}
+          {% set ns = namespace(count=0) %}
+          {% for detection in value_json if detection.class_name == 'cat' %}
+            {% set age_seconds = now_ts - as_timestamp(detection.timestamp) %}
+            {% if age_seconds >= 0 and age_seconds <= window_seconds %}
+              {% set ns.count = ns.count + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.count }}
+      - name: "YOLO Recent Two Cat Track Count"
+        unique_id: yolo_recent_two_cat_track_count
+        unit_of_measurement: "tracks"
+        icon: mdi:cat
+        value_template: >-
+          {% set window_seconds = 15 %}
+          {% set now_ts = as_timestamp(now()) %}
+          {% set ns = namespace(track_ids=[]) %}
+          {% for detection in value_json if detection.class_name == 'cat' %}
+            {% set age_seconds = now_ts - as_timestamp(detection.timestamp) %}
+            {% if age_seconds >= 0 and age_seconds <= window_seconds and detection.track_id is not none %}
+              {% set track_id = detection.track_id | string %}
+              {% if track_id not in ns.track_ids %}
+                {% set ns.track_ids = ns.track_ids + [track_id] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.track_ids | count }}
+
+  - resource: http://100.72.212.109:8787/status
+    scan_interval: 30
+    sensor:
+      - name: "Pi3 UPS Battery"
+        unique_id: pi3_ups_battery
+        availability: "{{ value_json.ok and value_json.battery_percent is not none }}"
+        value_template: "{{ value_json.battery_percent | float(0) }}"
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+
+template:
+  - sensor:
+      - name: "Pixel 8 Pro Last Update"
+        unique_id: pixel_8_pro_last_update
+        device_class: timestamp
+        icon: mdi:clock-outline
+        state: >-
+          {% set ts = states('sensor.pixel_8_pro_last_seen') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            {{ none }}
+          {% else %}
+            {{ as_datetime(ts).isoformat() }}
+          {% endif %}
+
+      - name: "Trent - Home"
+        unique_id: trent_home_fresh
+        icon: mdi:home-account
+        state: >-
+          {% set tailscale_last_seen = states('sensor.pixel_8_pro_last_seen') %}
+          {% if tailscale_last_seen in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            not_home
+          {% else %}
+            {% set minutes_since_update = ((now() - as_datetime(tailscale_last_seen)).total_seconds() / 60) | float(999) %}
+            {% if minutes_since_update > 20 %}
+              not_home
+            {% elif is_state('person.trent', 'home') %}
+              home
+            {% else %}
+              not_home
+            {% endif %}
+          {% endif %}
+        attributes:
+          source_entity: person.trent
+          freshness_source: sensor.pixel_8_pro_last_seen
+          stale_after_minutes: 20
+          source_state: "{{ states('person.trent') }}"
+          source_last_updated: "{{ states('sensor.pixel_8_pro_last_seen') }}"
+
+      - name: "Pixel 8 Pro Battery Badge"
+        unique_id: pixel_8_pro_battery_badge
+        icon: mdi:battery
+        state: >-
+          {% set value = states('sensor.pixel_8_pro_battery_level') %}
+          {% set freshness = states('input_datetime.pixel_8_pro_battery_last_real_change') %}
+          {% if value in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Unknown
+          {% elif freshness in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Stale
+          {% else %}
+            {% set minutes_since_change = ((now() - as_datetime(freshness)).total_seconds() / 60) | float(999) %}
+            {% if minutes_since_change > 20 %}
+              Stale
+            {% else %}
+              {{ value }}%
+            {% endif %}
+          {% endif %}
+        attributes:
+          source_entity: sensor.pixel_8_pro_battery_level
+          freshness_source: input_datetime.pixel_8_pro_battery_last_real_change
+          stale_after_minutes: 20
+          source_last_updated: "{{ states('input_datetime.pixel_8_pro_battery_last_real_change') }}"
+
+      - name: "Pixel 8 Pro Battery Recent"
+        unique_id: pixel_8_pro_battery_recent
+        unit_of_measurement: "%"
+        device_class: battery
+        state_class: measurement
+        icon: mdi:battery
+        state: >-
+          {% set value = states('sensor.pixel_8_pro_battery_level') %}
+          {% set freshness = states('input_datetime.pixel_8_pro_battery_last_real_change') %}
+          {% if value in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            unknown
+          {% elif freshness in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            unknown
+          {% else %}
+            {% set minutes_since_change = ((now() - as_datetime(freshness)).total_seconds() / 60) | float(999) %}
+            {% if minutes_since_change > 20 %}
+              unknown
+            {% else %}
+              {{ value | float(0) | round(0) }}
+            {% endif %}
+          {% endif %}
+        attributes:
+          source_entity: sensor.pixel_8_pro_battery_level
+          stale_after_minutes: 20
+
+      - name: "Tailscale MacBook Last Seen"
+        unique_id: tailscale_macbook_last_seen_badge
+        icon: mdi:vpn-off
+        state: >-
+          {% set ts = states('sensor.macbook_last_seen') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Unknown
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          device_name: "MacBook"
+          raw_last_seen: "{{ states('sensor.macbook_last_seen') }}"
+
+      - name: "Tailscale iPhone Last Seen"
+        unique_id: tailscale_iphone_last_seen_badge
+        icon: mdi:vpn-off
+        state: >-
+          {% set ts = states('sensor.iphone_last_seen') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Unknown
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          device_name: "iPhone"
+          raw_last_seen: "{{ states('sensor.iphone_last_seen') }}"
+
+      - name: "YOLO Cat Last Seen 2s"
+        unique_id: yolo_cat_last_seen_2s_badge
+        icon: mdi:cat-clock
+        state: >-
+          {% set ts = states('input_datetime.yolo_cat_last_appearance_2s') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Never
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          raw_last_seen: "{{ states('input_datetime.yolo_cat_last_appearance_2s') }}"
+          confirmed_presence_seconds: 2
+
+      - name: "YOLO Two Cats Last Seen"
+        unique_id: yolo_two_cats_last_seen_badge
+        icon: mdi:cat
+        state: >-
+          {% set ts = states('input_datetime.yolo_two_cats_last_appearance') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Never
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          raw_last_seen: "{{ states('input_datetime.yolo_two_cats_last_appearance') }}"
+
+      - name: "Power Outlets Total Power"
+        unique_id: power_outlets_total_power
+        unit_of_measurement: "W"
+        device_class: power
+        state_class: measurement
+        icon: mdi:flash
+        state: >-
+          {{
+            states('sensor.ac_power_outlet_monitor_1_washing_machine_power') | float(0) +
+            states('sensor.ac_outlet_monitor_2_power') | float(0) +
+            states('sensor.ac_power_outlet_monitor_3_power') | float(0) +
+            states('sensor.ac_power_outlet_monitor_4_power') | float(0)
+          }}
+
+      - name: "Power Outlets Total Energy"
+        unique_id: power_outlets_total_energy
+        unit_of_measurement: "kWh"
+        device_class: energy
+        state_class: total_increasing
+        icon: mdi:lightning-bolt
+        state: >-
+          {{
+            states('sensor.ac_power_outlet_monitor_1_washing_machine_summation_delivered') | float(0) +
+            states('sensor.ac_outlet_monitor_2_summation_delivered') | float(0) +
+            states('sensor.ac_power_outlet_monitor_3_summation_delivered') | float(0) +
+            states('sensor.ac_power_outlet_monitor_4_summation_delivered') | float(0)
+          }}
+      - name: "Cat Total Daily Feedings"
+        unique_id: cat_total_daily_feedings
+        unit_of_measurement: "portions"
+        state_class: measurement
+        icon: mdi:bowl
+        state: >-
+          {% set day = now().strftime('%A') | lower %}
+          {% set ns = namespace(total=0) %}
+          {% for slot in range(1, 9) %}
+            {% if is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_enabled', 'on')
+              and is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_' ~ day, 'on') %}
+              {% set ns.total = ns.total + (states('input_number.cat_feeder_slot_' ~ slot ~ '_amount') | float(0)) %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.total | round(1) }}
+        attributes:
+          active_slots: >-
+            {% set day = now().strftime('%A') | lower %}
+            {% set ns = namespace(slots=[]) %}
+            {% for slot in range(1, 9) %}
+              {% if is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_enabled', 'on')
+                and is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_' ~ day, 'on') %}
+                {% set time = states('input_datetime.cat_feeder_slot_' ~ slot ~ '_time') %}
+                {% set amount = states('input_number.cat_feeder_slot_' ~ slot ~ '_amount') | int(1) %}
+                {% set ns.slots = ns.slots + ['Slot ' ~ slot ~ ' @ ' ~ time[0:5] ~ ' (' ~ amount ~ ' portions)'] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.slots }}
+      - name: "Cat Total Daily Portions"
+        unique_id: cat_total_daily_portions
+        unit_of_measurement: "portions"
+        state_class: measurement
+        icon: mdi:bowl
+        state: >-
+          {% set day = now().strftime('%A') | lower %}
+          {% set ns = namespace(total=0) %}
+          {% for slot in range(1, 9) %}
+            {% if is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_enabled', 'on')
+              and is_state('input_boolean.cat_feeder_slot_' ~ slot ~ '_' ~ day, 'on') %}
+              {% set ns.total = ns.total + (states('input_number.cat_feeder_slot_' ~ slot ~ '_amount') | float(0)) %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.total | round(1) }}
+      - name: "Cat Total Daily Feed Grams"
+        unique_id: cat_total_daily_feed_grams
+        unit_of_measurement: "g"
+        state_class: measurement
+        icon: mdi:weight-gram
+        state: >-
+          {{
+            (states('sensor.cat_total_daily_portions') | float(0)) *
+            (states('input_number.cat_feeder_mass_per_portion_grams') | float(0))
+          }}
+      - name: "Cat Scheduled Portions Per Cat Per Day"
+        unique_id: cat_scheduled_portions_per_cat_per_day
+        unit_of_measurement: "portions"
+        state_class: measurement
+        icon: mdi:cat
+        state: >-
+          {% set cats = states('input_number.cat_feeder_number_of_cats') | float(1) %}
+          {{ ((states('sensor.cat_total_daily_portions') | float(0)) / cats) | round(2) if cats > 0 else 0 }}
+      - name: "Cat Scheduled Grams Per Cat Per Day"
+        unique_id: cat_scheduled_grams_per_cat_per_day
+        unit_of_measurement: "g"
+        state_class: measurement
+        icon: mdi:scale
+        state: >-
+          {% set cats = states('input_number.cat_feeder_number_of_cats') | float(1) %}
+          {{ ((states('sensor.cat_total_daily_feed_grams') | float(0)) / cats) | round(1) if cats > 0 else 0 }}
+      - name: "Cat Feeder Manual Operations Today"
+        unique_id: cat_feeder_manual_operations_today_sensor
+        unit_of_measurement: "operations"
+        state_class: total
+        icon: mdi:gesture-tap-button
+        state: "{{ states('input_number.cat_feeder_manual_operations_today') | int(0) }}"
+      - name: "Cat Feeder Health"
+        unique_id: cat_feeder_health
+        icon: >-
+          {% if is_state('binary_sensor.cat_feeder_unavailable', 'on') %}
+            mdi:lan-disconnect
+          {% elif is_state('input_boolean.cat_feeder_fault_active', 'on') %}
+            mdi:alert-circle
+          {% else %}
+            mdi:check-circle
+          {% endif %}
+        state: >-
+          {% if is_state('binary_sensor.cat_feeder_unavailable', 'on') %}
+            Device unavailable
+          {% elif is_state('input_boolean.cat_feeder_fault_active', 'on') %}
+            Needs attention
+          {% else %}
+            OK
+          {% endif %}
+        attributes:
+          last_request_source: "{{ states('input_text.cat_feeder_last_request_source') }}"
+          fault_reason: "{{ states('input_text.cat_feeder_fault_reason') }}"
+          last_requested_at: "{{ states('input_datetime.cat_feeder_last_request_at') }}"
+          last_manual_operation_at: "{{ states('input_datetime.cat_feeder_last_manual_operation_at') }}"
+          manual_operations_today: "{{ states('input_number.cat_feeder_manual_operations_today') | int(0) }}"
+          last_amount: "{{ states('sensor.cat_feeder_last_amount') }}"
+      - name: "YOLO Cat Track Count"
+        unique_id: yolo_cat_track_count
+        unit_of_measurement: "cats"
+        state_class: measurement
+        icon: mdi:cat
+        state: >-
+          {% set tracks = state_attr('sensor.yolo_current_track_count', 'active_tracks') %}
+          {% if tracks is not sequence %}
+            0
+          {% else %}
+            {{ tracks | selectattr('class_name', 'equalto', 'cat') | list | count }}
+          {% endif %}
+      - name: "YOLO Cat Detection Mode"
+        unique_id: yolo_cat_detection_mode
+        icon: mdi:tune-variant
+        state: >-
+          {% set live_tracks = states('sensor.yolo_cat_track_count') | int(0) %}
+          {% set score = states('sensor.yolo_recent_cat_detection_score') | float(0) %}
+          {% if live_tracks > 0 %}
+            Live tracks
+          {% elif score >= 3.0 %}
+            Rolling window fallback
+          {% else %}
+            Idle
+          {% endif %}
+        attributes:
+          live_track_count: "{{ states('sensor.yolo_cat_track_count') | int(0) }}"
+          recent_detection_score: "{{ states('sensor.yolo_recent_cat_detection_score') | float(0) }}"
+          recent_detection_count: "{{ states('sensor.yolo_recent_cat_detection_count') | int(0) }}"
+      - name: "YOLO Cat Appearances Today"
+        unique_id: yolo_cat_appearances_today_sensor
+        unit_of_measurement: "appearances"
+        state_class: total
+        icon: mdi:counter
+        state: "{{ states('input_number.yolo_cat_appearances_today') | int(0) }}"
+      - name: "YOLO Cat Appearances After Feed Today"
+        unique_id: yolo_cat_appearances_after_feed_today_sensor
+        unit_of_measurement: "appearances"
+        state_class: total
+        icon: mdi:food-drumstick
+        state: "{{ states('input_number.yolo_cat_appearances_after_feed_today') | int(0) }}"
+      - name: "YOLO Feed To Cat Latency Last"
+        unique_id: yolo_feed_to_cat_latency_last_sensor
+        unit_of_measurement: "min"
+        state_class: measurement
+        icon: mdi:timer-sand
+        state: "{{ states('input_number.yolo_feed_to_cat_latency_last_minutes') | float(0) | round(1) }}"
+      - name: "YOLO Latest Detection Summary"
+        unique_id: yolo_latest_detection_summary
+        icon: mdi:text-box-search-outline
+        state: >-
+          {% set object_class = states('sensor.yolo_latest_detection_class') %}
+          {% set confidence = states('sensor.yolo_latest_detection_confidence') %}
+          {% if object_class in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            No recent detection
+          {% else %}
+            {{ object_class }} @ {{ confidence }}%
+          {% endif %}
+        attributes:
+          detection_id: "{{ states('sensor.yolo_latest_detection_id') }}"
+          detected_at: "{{ states('sensor.yolo_latest_detection_timestamp') }}"
+          track_id: "{{ states('sensor.yolo_latest_detection_track_id') }}"
+      - name: "YOLO Feed Follow-up Status"
+        unique_id: yolo_feed_follow_up_status
+        icon: >-
+          {% if is_state('input_boolean.yolo_post_feed_cat_snapshot_pending', 'on') %}
+            mdi:camera-clock
+          {% else %}
+            mdi:camera-check
+          {% endif %}
+        state: >-
+          {% set last_request = states('input_datetime.cat_feeder_last_request_at') %}
+          {% if is_state('input_boolean.yolo_post_feed_cat_snapshot_pending', 'on') %}
+            Awaiting cat
+          {% elif last_request in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Idle
+          {% elif states('input_datetime.yolo_last_cat_after_feed_at') not in ['unknown', 'unavailable', 'none', 'None', '']
+             and as_timestamp(states('input_datetime.yolo_last_cat_after_feed_at')) >= as_timestamp(last_request) %}
+            Cat seen after feed
+          {% else %}
+            Idle
+          {% endif %}
+        attributes:
+          last_feeding_request: "{{ states('input_datetime.cat_feeder_last_request_at') }}"
+          follow_up_window_minutes: "{{ states('input_number.yolo_post_feed_cat_window_minutes') | int(0) }}"
+          last_snapshot: "{{ states('input_text.yolo_last_snapshot_file') }}"
+      - name: "YOLO Last Snapshot"
+        unique_id: yolo_last_snapshot_sensor
+        icon: mdi:image-outline
+        state: >-
+          {% set snapshot = states('input_text.yolo_last_snapshot_file') %}
+          {{ snapshot if snapshot not in ['unknown', 'unavailable', 'none', 'None', ''] else 'No snapshot yet' }}
+        attributes:
+          captured_at: "{{ states('input_datetime.yolo_last_snapshot_at') }}"
+    binary_sensor:
+      - name: "Clothes Dryer Vibration"
+        unique_id: clothes_dryer_vibration
+        icon: mdi:tumble-dryer
+        state: "{{ is_state('binary_sensor.vibration_sensor_clothes_dryer', 'on') }}"
+      - name: "Clothes Dryer Running"
+        unique_id: clothes_dryer_running
+        icon: mdi:tumble-dryer
+        delay_on: "{{ states('input_number.clothes_dryer_on_delay_seconds') | int(0) }}"
+        delay_off: "{{ states('input_number.clothes_dryer_off_delay_seconds') | int(0) }}"
+        state: "{{ is_state('binary_sensor.vibration_sensor_clothes_dryer', 'on') }}"
+      - name: "Clothes Washer Running"
+        unique_id: clothes_washer_running
+        icon: mdi:washing-machine
+        delay_on: "{{ states('input_number.clothes_washer_on_delay_seconds') | int(0) }}"
+        delay_off: "{{ states('input_number.clothes_washer_off_delay_seconds') | int(0) }}"
+        state: >-
+          {{ states('sensor.ac_power_outlet_monitor_1_washing_machine_power') not in
+             ['unknown', 'unavailable', 'none', 'None', '']
+             and states('sensor.ac_power_outlet_monitor_1_washing_machine_power') | float(0)
+             >= states('input_number.clothes_washer_power_threshold_watts') | float(0) }}
+        attributes:
+          current_power_watts: "{{ states('sensor.ac_power_outlet_monitor_1_washing_machine_power') }}"
+          threshold_watts: "{{ states('input_number.clothes_washer_power_threshold_watts') }}"
+      - name: "Cat Feeder Unavailable"
+        unique_id: cat_feeder_unavailable
+        icon: mdi:lan-disconnect
+        state: >-
+          {{ states('number.cat_feeder_feed') in ['unknown', 'unavailable']
+             or states('sensor.cat_feeder_last_amount') in ['unknown', 'unavailable'] }}
+      - name: "YOLO Cat Detected"
+        unique_id: yolo_cat_detected
+        icon: mdi:cat
+        delay_on:
+          seconds: 2
+        delay_off: "{{ states('input_number.yolo_cat_absence_clear_seconds') | int(5) }}"
+        state: >-
+          {{ states('sensor.yolo_cat_track_count') | int(0) > 0
+             or states('sensor.yolo_recent_cat_detection_score') | float(0) >= 3.0 }}
+      - name: "YOLO Cat Detected 2s"
+        unique_id: yolo_cat_detected_2s
+        icon: mdi:cat
+        delay_on:
+          seconds: 2
+        delay_off: "{{ states('input_number.yolo_cat_absence_clear_seconds') | int(5) }}"
+        state: >-
+          {{ states('sensor.yolo_cat_track_count') | int(0) > 0
+             or states('sensor.yolo_recent_cat_detection_score') | float(0) >= 2.0 }}
+      - name: "YOLO Two Cats Detected"
+        unique_id: yolo_two_cats_detected
+        icon: mdi:cat
+        delay_on:
+          seconds: 3
+        delay_off: "{{ states('input_number.yolo_cat_absence_clear_seconds') | int(5) }}"
+        state: >-
+          {{ states('sensor.yolo_cat_track_count') | int(0) >= 2
+             or states('sensor.yolo_recent_two_cat_track_count') | int(0) >= 2 }}
+
+sensor:
+  - platform: statistics
+    name: "Power Outlets Average Power 24h"
+    unique_id: power_outlets_average_power_24h
+    entity_id: sensor.power_outlets_total_power
+    state_characteristic: average_linear
+    max_age:
+      hours: 24
+    keep_last_sample: true
+    precision: 1
+
+  - platform: statistics
+    name: "Power Outlets Average Power 7d"
+    unique_id: power_outlets_average_power_7d
+    entity_id: sensor.power_outlets_total_power
+    state_characteristic: average_linear
+    max_age:
+      days: 7
+    keep_last_sample: true
+    precision: 1
+
+  - platform: statistics
+    name: "Power Outlets Average Power 30d"
+    unique_id: power_outlets_average_power_30d
+    entity_id: sensor.power_outlets_total_power
+    state_characteristic: average_linear
+    max_age:
+      days: 30
+    keep_last_sample: true
+    precision: 1
+
+  - platform: history_stats
+    name: "YOLO Cat Presence 24h"
+    unique_id: yolo_cat_presence_24h
+    entity_id: binary_sensor.yolo_cat_detected
+    state: "on"
+    type: time
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+
+  - platform: history_stats
+    name: "YOLO Cat Detection Events 24h"
+    unique_id: yolo_cat_detection_events_24h
+    entity_id: binary_sensor.yolo_cat_detected
+    state: "on"
+    type: count
+    end: "{{ now() }}"
+    duration:
+      hours: 24
+
+  - platform: statistics
+    name: "YOLO Feed To Cat Latency Mean 7d"
+    unique_id: yolo_feed_to_cat_latency_mean_7d
+    entity_id: input_number.yolo_feed_to_cat_latency_last_minutes
+    state_characteristic: mean
+    max_age:
+      days: 7
+    keep_last_sample: true
+    precision: 1
+
+utility_meter:
+  power_outlets_energy_daily:
+    unique_id: power_outlets_energy_daily
+    source: sensor.power_outlets_total_energy
+    cycle: daily
+
+  power_outlets_energy_weekly:
+    unique_id: power_outlets_energy_weekly
+    source: sensor.power_outlets_total_energy
+    cycle: weekly
+
+  power_outlets_energy_monthly:
+    unique_id: power_outlets_energy_monthly
+    source: sensor.power_outlets_total_energy
+    cycle: monthly

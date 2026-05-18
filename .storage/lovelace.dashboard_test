@@ -1,0 +1,415 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.dashboard_test",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "type": "sections",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Services",
+                  "heading_style": "title",
+                  "icon": "mdi:gesture-tap-button",
+                  "grid_options": {
+                    "columns": "full",
+                    "rows": 1
+                  }
+                },
+                {
+                  "type": "thermostat",
+                  "entity": "climate.bay_village",
+                  "features": [
+                    {
+                      "type": "climate-hvac-modes"
+                    }
+                  ],
+                  "name": {
+                    "type": "device"
+                  },
+                  "grid_options": {
+                    "columns": 8,
+                    "rows": 5
+                  },
+                  "show_current_as_primary": true
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "icon": "mdi:dots-grid",
+                  "show_state": false,
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "https://login.tailscale.com/admin/machines"
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "color": "dark-grey",
+                  "name": "Tailscale"
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "device_tracker.pixel_8_pro",
+                  "icon": "mdi:cellphone-wireless",
+                  "name": "Find Phone",
+                  "hold_action": {
+                    "action": "toggle"
+                  },
+                  "icon_height": "40px",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "double_tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.find_phone",
+                    "target": {}
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Media",
+                  "heading_style": "title",
+                  "icon": "mdi:movie-open-play-outline",
+                  "badges": [
+                    {
+                      "type": "entity",
+                      "show_state": true,
+                      "show_icon": true,
+                      "entity": "sensor.jetson",
+                      "color": "deep-orange",
+                      "name": {
+                        "type": "device"
+                      },
+                      "state_content": [
+                        "state",
+                        "last_changed"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "media-control",
+                  "entity": "media_player.spotify",
+                  "grid_options": {
+                    "rows": 4,
+                    "columns": 12
+                  }
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "entity": "sensor.jetson",
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "https://app.plex.tv/desktop/"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "color": "deep-orange",
+                  "show_state": false
+                },
+                {
+                  "show_name": true,
+                  "show_icon": true,
+                  "type": "button",
+                  "name": "RARBG",
+                  "icon": "mdi:pirate",
+                  "color": "accent",
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "https://rargb.to/"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  }
+                }
+              ],
+              "column_span": 2
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Information",
+                  "heading_style": "title",
+                  "icon": "mdi:information"
+                },
+                {
+                  "clock_style": "digital",
+                  "clock_size": "medium",
+                  "show_seconds": false,
+                  "no_background": false,
+                  "type": "clock",
+                  "face_style": "markers",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 2
+                  }
+                },
+                {
+                  "show_current": true,
+                  "show_forecast": true,
+                  "type": "weather-forecast",
+                  "entity": "weather.forecast_home",
+                  "forecast_type": "daily",
+                  "forecast_slots": 8,
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 5
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.framework_last_seen"
+                },
+                {
+                  "initial_view": "dayGridMonth",
+                  "type": "calendar",
+                  "entities": [
+                    "calendar.family",
+                    "calendar.mcmanus_trent_calendar_canvas",
+                    "calendar.birthdays",
+                    "calendar.holidays_in_united_states",
+                    "calendar.trent_mcmanus_gmail_com"
+                  ],
+                  "grid_options": {
+                    "rows": 7,
+                    "columns": 15
+                  }
+                },
+                {
+                  "square": true,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "distribution",
+                      "entities": [
+                        {
+                          "entity": "sensor.onedrive_used_storage",
+                          "name": "Used"
+                        },
+                        {
+                          "entity": "sensor.onedrive_remaining_storage",
+                          "name": "Free"
+                        }
+                      ],
+                      "title": "OneDrive",
+                      "grid_options": {
+                        "columns": 5,
+                        "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "distribution",
+                      "entities": [
+                        {
+                          "entity": "sensor.nextcloud_jetson_total_memory",
+                          "name": "Used"
+                        },
+                        {
+                          "entity": "sensor.nextcloud_jetson_free_space",
+                          "name": "Free"
+                        }
+                      ],
+                      "title": "Nextcloud",
+                      "grid_options": {
+                        "columns": 5,
+                        "rows": "auto"
+                      }
+                    },
+                    {
+                      "type": "distribution",
+                      "entities": [
+                        {
+                          "entity": "sensor.trent_mcmanus_gmail_com_used_storage_in_drive",
+                          "name": "Used"
+                        },
+                        {
+                          "entity": "sensor.trent_mcmanus_gmail_com_total_available_storage",
+                          "name": "Free"
+                        },
+                        {
+                          "entity": "sensor.trent_mcmanus_gmail_com_used_storage",
+                          "name": "Used"
+                        }
+                      ],
+                      "title": "GDrive",
+                      "grid_options": {
+                        "columns": 5,
+                        "rows": "auto"
+                      }
+                    }
+                  ],
+                  "grid_options": {
+                    "rows": "auto",
+                    "columns": 15
+                  },
+                  "columns": 3
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.hl_l3280cdw_page_counter",
+                  "name": {
+                    "type": "device"
+                  },
+                  "needle": false,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 3
+                  }
+                }
+              ],
+              "column_span": 4
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Cats",
+                  "heading_style": "title",
+                  "icon": "mdi:cat",
+                  "badges": []
+                },
+                {
+                  "type": "picture",
+                  "image": {
+                    "media_content_id": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/video_feed"
+                  },
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 4
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.pi3_7_last_seen"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "New section"
+                },
+                {
+                  "display_order": "none",
+                  "type": "todo-list",
+                  "title": "To Do",
+                  "entity": "todo.automations_to_integrate",
+                  "hide_section_headers": false,
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 8
+                  }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Daphne"
+                },
+                {
+                  "type": "tile",
+                  "entity": "weather.daphne"
+                }
+              ]
+            }
+          ],
+          "header": {
+            "layout": "responsive",
+            "badges_position": "top",
+            "badges_wrap": "wrap"
+          },
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.jetson_orin_nano_last_seen",
+              "name": "Jetson",
+              "show_entity_picture": false,
+              "icon": "mdi:server",
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.jetson_orin_nano_last_seen",
+                  "state": "unavailable"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.jetson_orin_nano_ip_address",
+                      "state": "unavailable"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.main_desktop_w11_last_seen",
+              "show_entity_picture": false
+            }
+          ],
+          "background": {
+            "opacity": 33,
+            "alignment": "center",
+            "size": "cover",
+            "repeat": "repeat",
+            "attachment": "fixed"
+          },
+          "cards": [],
+          "title": "Main View",
+          "subview": false,
+          "show_icon_and_title": false,
+          "icon": "mdi:monitor-dashboard",
+          "max_columns": 4,
+          "dense_section_placement": true
+        }
+      ]
+    }
+  }
+}

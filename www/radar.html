@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Radar</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  >
+  <style>
+    html, body, #map {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      background: #081018;
+      color: #e7eef7;
+      font-family: system-ui, sans-serif;
+    }
+
+    .badge {
+      position: absolute;
+      z-index: 1000;
+      left: 12px;
+      top: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(8, 16, 24, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(6px);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .badge strong {
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div id="badge" class="badge">Radar: <strong>Loading...</strong></div>
+  <div id="map"></div>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const fallback = {
+      name: "Daphne, AL",
+      lat: 30.6035,
+      lon: -87.9036,
+      zoom: 8,
+    };
+
+    const badge = document.getElementById("badge");
+    const map = L.map("map", {
+      zoomControl: false,
+      attributionControl: true,
+    }).setView([fallback.lat, fallback.lon], fallback.zoom);
+
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 12,
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    let radarLayer;
+    let marker;
+
+    function setBadge(text) {
+      badge.innerHTML = `Radar: <strong>${text}</strong>`;
+    }
+
+    async function getTarget() {
+      try {
+        const response = await fetch("/api/states/device_tracker.pixel_8_pro", {
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error(`state fetch failed: ${response.status}`);
+        }
+
+        const state = await response.json();
+        const lat = state?.attributes?.latitude;
+        const lon = state?.attributes?.longitude;
+
+        if (typeof lat === "number" && typeof lon === "number") {
+          return {
+            name: "Pixel 8 Pro",
+            lat,
+            lon,
+            zoom: 8,
+          };
+        }
+      } catch (error) {
+        console.debug("Pixel 8 Pro location unavailable", error);
+      }
+
+      return fallback;
+    }
+
+    async function updateRadar() {
+      const target = await getTarget();
+      map.setView([target.lat, target.lon], target.zoom);
+      setBadge(target.name);
+
+      if (!marker) {
+        marker = L.circleMarker([target.lat, target.lon], {
+          radius: 6,
+          color: "#ffffff",
+          weight: 2,
+          fillColor: "#4da3ff",
+          fillOpacity: 0.9,
+        }).addTo(map);
+      } else {
+        marker.setLatLng([target.lat, target.lon]);
+      }
+
+      try {
+        const response = await fetch("https://api.rainviewer.com/public/weather-maps.json", {
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error(`rainviewer fetch failed: ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const frames = [...(payload.radar?.past || []), ...(payload.radar?.nowcast || [])];
+        const latest = frames.at(-1);
+
+        if (!latest?.time) {
+          throw new Error("no radar frames");
+        }
+
+        const nextUrl = `https://tilecache.rainviewer.com/v2/radar/${latest.time}/256/{z}/{x}/{y}/2/1_1.png`;
+
+        if (radarLayer) {
+          radarLayer.setUrl(nextUrl);
+        } else {
+          radarLayer = L.tileLayer(nextUrl, {
+            tileSize: 256,
+            opacity: 0.72,
+            maxZoom: 12,
+            attribution: '&copy; <a href="https://www.rainviewer.com/">RainViewer</a>',
+          }).addTo(map);
+        }
+      } catch (error) {
+        console.error("Radar refresh failed", error);
+        setBadge(`${target.name} (radar unavailable)`);
+      }
+    }
+
+    updateRadar();
+    setInterval(updateRadar, 5 * 60 * 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1277 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace.desktop_tablet",
+  "data": {
+    "config": {
+      "views": [
+        {
+          "type": "sections",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "picture",
+                  "image": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/video_feed",
+                  "grid_options": {
+                    "columns": 15,
+                    "rows": 4
+                  },
+                  "tap_action": {
+                    "action": "none"
+                  },
+                  "hold_action": {
+                    "action": "url",
+                    "url_path": "http://jetson-orin-nano.swordfish-kelvin.ts.net:5000/"
+                  }
+                },
+                {
+                  "clock_style": "digital",
+                  "clock_size": "medium",
+                  "show_seconds": false,
+                  "no_background": false,
+                  "type": "clock",
+                  "face_style": "markers",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  }
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 3,
+                    "rows": 2
+                  },
+                  "entity": "weather.forecast_home",
+                  "name": "Weather",
+                  "show_entity_picture": false,
+                  "hide_state": false,
+                  "state_content": "temperature",
+                  "vertical": true,
+                  "tap_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "thermostat",
+                  "entity": "climate.bay_village",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 3
+                  },
+                  "show_current_as_primary": true
+                },
+                {
+                  "square": true,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "tile",
+                      "grid_options": {
+                        "columns": 3,
+                        "rows": 2
+                      },
+                      "visibility": [
+                        {
+                          "condition": "state",
+                          "entity": "input_boolean.clothes_dryer_status",
+                          "state": "on"
+                        }
+                      ],
+                      "entity": "binary_sensor.clothes_dryer_vibration",
+                      "name": "Dryer",
+                      "icon": "mdi:tumble-dryer",
+                      "vertical": true,
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "icon_tap_action": {
+                        "action": "more-info"
+                      },
+                      "features_position": "bottom"
+                    },
+                    {
+                      "type": "tile",
+                      "grid_options": {
+                        "columns": 3,
+                        "rows": 2
+                      },
+                      "entity": "binary_sensor.clothes_washer_running",
+                      "name": "Washer",
+                      "icon": "mdi:washing-machine",
+                      "vertical": true,
+                      "features_position": "bottom",
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "icon_tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ],
+                  "columns": 2,
+                  "grid_options": {
+                    "columns": 5,
+                    "rows": "auto"
+                  }
+                },
+                {
+                  "square": true,
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "entity": "device_tracker.pixel_8_pro",
+                      "icon": "mdi:cellphone-wireless",
+                      "name": "Find Phone",
+                      "hold_action": {
+                        "action": "toggle"
+                      },
+                      "icon_height": "40px",
+                      "grid_options": {
+                        "columns": 2,
+                        "rows": 2
+                      },
+                      "double_tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.find_phone",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "entity": "script.cat_feeder_dispense_amount",
+                      "name": "Feed Cats",
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_feeder_dispense_amount",
+                        "target": {},
+                        "data": {
+                          "amount": 1,
+                          "source": "Quick Feed"
+                        }
+                      },
+                      "show_state": false,
+                      "color": "blue-grey",
+                      "grid_options": {
+                        "columns": 2,
+                        "rows": 2
+                      }
+                    }
+                  ],
+                  "columns": 2,
+                  "grid_options": {
+                    "columns": 5,
+                    "rows": "auto"
+                  }
+                }
+              ],
+              "column_span": 2
+            }
+          ],
+          "header": {
+            "layout": "start",
+            "badges_position": "top",
+            "badges_wrap": "scroll"
+          },
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.trent_home",
+              "tap_action": {
+                "action": "more-info"
+              },
+              "name": "Trent - Home",
+              "icon": "mdi:home-account"
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.yolo_cat_last_seen_2s",
+              "icon": "mdi:cat-clock",
+              "tap_action": {
+                "action": "more-info"
+              },
+              "name": "Cat Last Seen",
+              "show_entity_picture": false
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.eero_uptime",
+              "icon": "mdi:web",
+              "name": "Internet",
+              "visibility": [
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.eero_uptime",
+                      "state": "unavailable"
+                    },
+                    {
+                      "condition": "state",
+                      "entity": "sensor.eero_uptime",
+                      "state": "unknown"
+                    },
+                    {
+                      "condition": "numeric_state",
+                      "entity": "sensor.eero_uptime",
+                      "below": 60
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.jetson_orin_nano_last_seen",
+              "name": "Jetson",
+              "show_entity_picture": false,
+              "icon": "mdi:server",
+              "visibility": [
+                {
+                  "condition": "state",
+                  "entity": "sensor.jetson_orin_nano_last_seen",
+                  "state": "unavailable"
+                },
+                {
+                  "condition": "or",
+                  "conditions": [
+                    {
+                      "condition": "state",
+                      "entity": "sensor.jetson_orin_nano_ip_address",
+                      "state": "unavailable"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.vibration_sensor_clothes_dryer_battery",
+              "icon": "mdi:tumble-dryer",
+              "visibility": [
+                {
+                  "condition": "numeric_state",
+                  "entity": "sensor.vibration_sensor_clothes_dryer_battery",
+                  "below": 20
+                }
+              ],
+              "name": "Dryer Sensor Battery"
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.pixel_8_pro_battery_badge",
+              "name": "Phone"
+            },
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "binary_sensor.yolo_two_cats_detected",
+              "name": "Two Cats",
+              "icon": "mdi:cat",
+              "tap_action": {
+                "action": "more-info"
+              }
+            }
+          ],
+          "background": {
+            "opacity": 33,
+            "alignment": "center",
+            "size": "cover",
+            "repeat": "repeat",
+            "attachment": "fixed"
+          },
+          "cards": [],
+          "subview": false,
+          "show_icon_and_title": false,
+          "icon": "mdi:monitor-dashboard"
+        },
+        {
+          "type": "sections",
+          "title": "Power",
+          "path": "power",
+          "icon": "mdi:flash",
+          "max_columns": 2,
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Washer",
+                  "heading_style": "title",
+                  "icon": "mdi:washing-machine"
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  },
+                  "entity": "switch.ac_power_outlet_monitor_1_washing_machine",
+                  "name": "Washer Outlet",
+                  "icon": "mdi:power-socket-us",
+                  "hide_state": false,
+                  "vertical": false,
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Desk Outlet",
+                  "heading_style": "title",
+                  "icon": "mdi:power-socket-us"
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  },
+                  "entity": "switch.ac_outlet_monitor_2",
+                  "name": "Desk Outlet",
+                  "icon": "mdi:power-socket-us",
+                  "vertical": false,
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "icon_tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_hold_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_outlet_monitor_2_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Space Heater",
+                  "heading_style": "title",
+                  "icon": "mdi:radiator"
+                },
+                {
+                  "type": "tile",
+                  "entity": "switch.ac_power_outlet_monitor_3",
+                  "name": "Space Heater Outlet",
+                  "icon": "mdi:power-socket-us",
+                  "vertical": false,
+                  "tap_action": {
+                    "action": "toggle"
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "icon_tap_action": {
+                    "action": "toggle"
+                  },
+                  "icon_hold_action": {
+                    "action": "more-info"
+                  },
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_3_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Bathroom Heater",
+                  "heading_style": "title",
+                  "icon": "mdi:radiator-disabled"
+                },
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 1
+                  },
+                  "entity": "switch.ac_power_outlet_monitor_4",
+                  "name": "Bathroom Heat Outlet",
+                  "icon": "mdi:power-socket-us",
+                  "hide_state": false,
+                  "vertical": false,
+                  "features_position": "inline"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_power",
+                  "name": "Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.ac_power_outlet_monitor_4_summation_delivered",
+                  "name": "Lifetime Energy"
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Totals",
+                  "heading_style": "title",
+                  "icon": "mdi:chart-line"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_total_power",
+                  "name": "Live Total Power"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_24h",
+                  "name": "Average Power 24h"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_7d",
+                  "name": "Average Power 7d"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_average_power_30d",
+                  "name": "Average Power 30d"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_daily",
+                  "name": "Energy Last Day"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_weekly",
+                  "name": "Energy Last Week"
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.power_outlets_energy_monthly",
+                  "name": "Energy Last Month"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Extra",
+          "path": "extra",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "tile",
+                  "grid_options": {
+                    "columns": 4,
+                    "rows": 2
+                  },
+                  "entity": "conversation.home_assistant",
+                  "name": "Assist",
+                  "show_entity_picture": false,
+                  "hide_state": true,
+                  "vertical": true,
+                  "tap_action": {
+                    "action": "assist",
+                    "start_listening": true
+                  },
+                  "hold_action": {
+                    "action": "more-info"
+                  },
+                  "icon_tap_action": {
+                    "action": "assist",
+                    "start_listening": true
+                  },
+                  "features_position": "bottom"
+                },
+                {
+                  "type": "picture",
+                  "image": "https://radar.weather.gov/ridge/standard/KCLE_loop.gif",
+                  "alt_text": "NOAA Cleveland radar loop",
+                  "tap_action": {
+                    "action": "url",
+                    "url_path": "https://radar.weather.gov/station/KCLE/standard"
+                  },
+                  "hold_action": {
+                    "action": "none"
+                  },
+                  "grid_options": {
+                    "columns": 12,
+                    "rows": 5
+                  }
+                },
+                {
+                  "type": "tile",
+                  "entity": "sensor.pi3_ups_battery",
+                  "vertical": false,
+                  "features_position": "bottom"
+                },
+                {
+                  "square": false,
+                  "type": "grid",
+                  "title": "Cat Door",
+                  "columns": 2,
+                  "grid_options": {
+                    "columns": 6,
+                    "rows": 4
+                  },
+                  "cards": [
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Locked",
+                      "icon": "mdi:lock",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_locked",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "In Only",
+                      "icon": "mdi:arrow-right-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_in_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Out Only",
+                      "icon": "mdi:arrow-left-bold-circle-outline",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_out_only",
+                        "target": {}
+                      }
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "name": "Unlocked",
+                      "icon": "mdi:swap-horizontal-bold",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_door_unlocked",
+                        "target": {}
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "button",
+                  "entity": "script.cat_feeder_dispense_amount",
+                  "name": "Feed Cats",
+                  "icon": "mdi:cat",
+                  "show_state": false,
+                  "tap_action": {
+                    "action": "perform-action",
+                    "perform_action": "script.cat_feeder_dispense_amount",
+                    "target": {},
+                    "data": {
+                      "amount": 1,
+                      "source": "Cat controls feed"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "grid",
+                  "cards": [
+                    {
+                      "type": "heading",
+                      "heading": "Clothes Washer",
+                      "heading_style": "title"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "input_boolean.clothes_washer_cycle_active",
+                      "name": "Cycle Active"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "input_boolean.clothes_washer_done_pending_ack",
+                      "name": "Needs Acknowledgment"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "sensor.ac_power_outlet_monitor_1_washing_machine_power",
+                      "name": "Power"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "input_number.clothes_washer_power_threshold_watts",
+                      "name": "Threshold",
+                      "vertical": false,
+                      "features_position": "bottom"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "input_number.clothes_washer_on_delay_seconds",
+                      "name": "On Delay"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "input_number.clothes_washer_off_delay_seconds",
+                      "name": "Off Delay"
+                    },
+                    {
+                      "type": "tile",
+                      "entity": "binary_sensor.clothes_dryer_vibration",
+                      "name": "Dryer Vibration"
+                    },
+                    {
+                      "show_name": true,
+                      "show_icon": true,
+                      "type": "button",
+                      "entity": "script.acknowledge_clothes_washer_done",
+                      "name": "Acknowledge Washer",
+                      "icon": "mdi:check-circle",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.turn_on",
+                        "target": {
+                          "entity_id": "script.acknowledge_clothes_washer_done"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "badges": [
+            {
+              "type": "entity",
+              "show_name": true,
+              "show_state": true,
+              "show_icon": true,
+              "entity": "sensor.main_desktop_w11_last_seen",
+              "show_entity_picture": false,
+              "name": "Desktop"
+            }
+          ]
+        },
+        {
+          "type": "sections",
+          "max_columns": 4,
+          "title": "Cats",
+          "path": "cats",
+          "icon": "mdi:cat",
+          "sections": [
+            {
+              "type": "grid",
+              "cards": [
+                {
+                  "type": "heading",
+                  "heading": "Cat Feeder Schedule",
+                  "heading_style": "title"
+                },
+                {
+                  "type": "markdown",
+                  "title": "Feeding Status",
+                  "content": "{% set enabled = is_state('input_boolean.cat_feeder_schedule_enabled', 'on') %}\n{% set since = states('input_number.cat_feedings_since_midnight') | int(0) %}\n{% set scheduled_portions = states('sensor.cat_total_daily_portions') %}\n{% set grams = states('sensor.cat_total_daily_feed_grams') %}\n{% set portions_per_cat = states('sensor.cat_scheduled_portions_per_cat_per_day') %}\n{% set grams_per_cat = states('sensor.cat_scheduled_grams_per_cat_per_day') %}\n{% set manual_ops = states('sensor.cat_feeder_manual_operations_today') %}\n{% set last_manual = states('input_datetime.cat_feeder_last_manual_operation_at') %}\n{% set health = states('sensor.cat_feeder_health') %}\n{% set last = states('sensor.cat_feeder_last_amount') %}\n{% set fault = states('input_text.cat_feeder_fault_reason') %}\n{% set slots = state_attr('sensor.cat_total_daily_feedings', 'active_slots') or [] %}\n**Schedule:** {{ 'On' if enabled else 'Off' }}  \n**Health:** {{ health }}  \n**Scheduled portions today:** {{ scheduled_portions if scheduled_portions not in ['unknown','unavailable','none','None',''] else 'Unknown' }}  \n**Feed commands since midnight:** {{ since }}  \n**Manual operations today:** {{ manual_ops if manual_ops not in ['unknown','unavailable','none','None',''] else '0' }}  \n**Last manual operation:** {{ last_manual if last_manual not in ['unknown','unavailable','none','None',''] else 'Never detected' }}  \n**Grams today:** {{ grams if grams not in ['unknown','unavailable','none','None',''] else 'Unknown' }}  \n**Portions per cat/day:** {{ portions_per_cat if portions_per_cat not in ['unknown','unavailable','none','None',''] else 'Unknown' }}  \n**Grams per cat/day:** {{ grams_per_cat if grams_per_cat not in ['unknown','unavailable','none','None',''] else 'Unknown' }}  \n**Last amount:** {{ last if last not in ['unknown','unavailable','none','None',''] else 'Unknown' }}  \n**Today's slots:** {{ slots | join(', ') if slots else 'None configured' }}{% if fault not in ['unknown','unavailable','none','None',''] and fault | trim != '' %}  \n**Alert:** {{ fault }}{% endif %}"
+                },
+                {
+                  "type": "grid",
+                  "columns": 2,
+                  "square": false,
+                  "cards": [
+                    {
+                      "type": "button",
+                      "entity": "script.cat_feeder_dispense_amount",
+                      "name": "Feed Now",
+                      "icon": "mdi:cat",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_feeder_dispense_amount",
+                        "target": {},
+                        "data": {
+                          "amount": 1,
+                          "source": "Cats view feed now"
+                        }
+                      }
+                    },
+                    {
+                      "type": "button",
+                      "entity": "script.cat_feeder_add_slot",
+                      "name": "Add Slot",
+                      "icon": "mdi:playlist-plus",
+                      "show_state": false,
+                      "tap_action": {
+                        "action": "perform-action",
+                        "perform_action": "script.cat_feeder_add_slot",
+                        "target": {},
+                        "data": {}
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Overview",
+                  "entities": [
+                    "input_boolean.cat_feeder_schedule_enabled",
+                    "sensor.cat_feeder_health",
+                    "binary_sensor.cat_feeder_unavailable",
+                    "input_number.cat_feedings_since_midnight",
+                    "sensor.cat_total_daily_feedings",
+                    "sensor.cat_total_daily_portions",
+                    "sensor.cat_total_daily_feed_grams",
+                    "sensor.cat_feeder_manual_operations_today",
+                    "input_datetime.cat_feeder_last_manual_operation_at",
+                    "sensor.cat_scheduled_portions_per_cat_per_day",
+                    "sensor.cat_scheduled_grams_per_cat_per_day",
+                    "sensor.cat_feeder_last_amount"
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Nutrition Inputs",
+                  "entities": [
+                    "input_number.cat_feeder_visible_slots",
+                    "input_number.cat_feeder_mass_per_portion_grams",
+                    "input_number.cat_feeder_number_of_cats",
+                    "sensor.cat_scheduled_portions_per_cat_per_day"
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 1",
+                  "show_header_toggle": false,
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_1_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_1_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_1_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 2",
+                  "show_header_toggle": false,
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_2_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_2_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_2_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 3",
+                  "show_header_toggle": false,
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_3_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_3_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_3_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 4",
+                  "show_header_toggle": false,
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_4_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_4_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_4_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 5",
+                  "show_header_toggle": false,
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "input_number.cat_feeder_visible_slots",
+                      "above": 4
+                    }
+                  ],
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_5_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_5_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_5_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 6",
+                  "show_header_toggle": false,
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "input_number.cat_feeder_visible_slots",
+                      "above": 5
+                    }
+                  ],
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_6_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_6_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_6_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 7",
+                  "show_header_toggle": false,
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "input_number.cat_feeder_visible_slots",
+                      "above": 6
+                    }
+                  ],
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_7_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_7_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_7_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                },
+                {
+                  "type": "entities",
+                  "title": "Slot 8",
+                  "show_header_toggle": false,
+                  "visibility": [
+                    {
+                      "condition": "numeric_state",
+                      "entity": "input_number.cat_feeder_visible_slots",
+                      "above": 7
+                    }
+                  ],
+                  "entities": [
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_enabled",
+                      "name": "Enabled"
+                    },
+                    {
+                      "entity": "input_datetime.cat_feeder_slot_8_time",
+                      "name": "Time"
+                    },
+                    {
+                      "entity": "input_number.cat_feeder_slot_8_amount",
+                      "name": "Amount"
+                    },
+                    {
+                      "type": "section",
+                      "label": "Days"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_monday",
+                      "name": "Mon"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_tuesday",
+                      "name": "Tue"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_wednesday",
+                      "name": "Wed"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_thursday",
+                      "name": "Thu"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_friday",
+                      "name": "Fri"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_saturday",
+                      "name": "Sat"
+                    },
+                    {
+                      "entity": "input_boolean.cat_feeder_slot_8_sunday",
+                      "name": "Sun"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

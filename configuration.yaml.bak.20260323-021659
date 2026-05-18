@@ -1,0 +1,54 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+rest_command:
+  cat_door_set_locked:
+    url: http://192.168.0.10:8080/position?p=0
+    method: POST
+  cat_door_set_in_only:
+    url: http://192.168.0.10:8080/position?p=1
+    method: POST
+  cat_door_set_out_only:
+    url: http://192.168.0.10:8080/position?p=2
+    method: POST
+  cat_door_set_unlocked:
+    url: http://192.168.0.10:8080/position?p=3
+    method: POST
+
+template:
+  - sensor:
+      - name: "Tailscale MacBook Last Seen"
+        unique_id: tailscale_macbook_last_seen_badge
+        icon: mdi:vpn-off
+        state: >-
+          {% set ts = states('sensor.macbook_last_seen') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Unknown
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          device_name: "MacBook"
+          raw_last_seen: "{{ states('sensor.macbook_last_seen') }}"
+
+      - name: "Tailscale iPhone Last Seen"
+        unique_id: tailscale_iphone_last_seen_badge
+        icon: mdi:vpn-off
+        state: >-
+          {% set ts = states('sensor.iphone_last_seen') %}
+          {% if ts in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            Unknown
+          {% else %}
+            {{ relative_time(as_datetime(ts)) }} ago
+          {% endif %}
+        attributes:
+          device_name: "iPhone"
+          raw_last_seen: "{{ states('sensor.iphone_last_seen') }}"

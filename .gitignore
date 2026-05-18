@@ -1,0 +1,41 @@
+# Credentials — never commit
+secrets.yaml
+known_devices.yaml
+
+# .storage — ONLY track dashboards; everything else has credentials or runtime state
+.storage/*
+!.storage/lovelace*
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+*.log.*
+*.log.fault
+
+# Third-party integrations managed by HACS (not your config)
+custom_components/
+
+# Large dependency/cache directories
+deps/
+tts/
+backups/
+
+# Auto-generated snapshots (grow continuously, not config)
+www/yolo_snapshots/
+www/kinect_snapshot.jpg
+
+# Runtime files
+.ha_run.lock
+home-assistant_v2.db*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db

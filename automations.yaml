@@ -1,0 +1,38 @@
+- id: '1773959749736'
+  alias: test music
+  description: ''
+  triggers:
+  - trigger: event
+    event_type: ''
+  conditions: []
+  actions:
+  - action: media_player.select_source
+    metadata: {}
+    target:
+      device_id: ad0d83266d532efd1a297351157d77e5
+    data: {}
+  - action: media_player.browse_media
+    metadata: {}
+    target:
+      device_id: 42dea375208d844f21257fa17426f0fc
+      entity_id: media_player.xbox_series_x
+    data: {}
+  mode: single
+- id: '1779052325387'
+  alias: Toggle Override
+  description: Disables hiding views based on screen resolution
+  triggers:
+  - trigger: state
+    entity_id: []
+  conditions: []
+  actions: []
+  mode: single
+- id: '1779052328341'
+  alias: Toggle Override
+  description: Disables hiding views based on screen resolution
+  triggers:
+  - trigger: state
+    entity_id: []
+  conditions: []
+  actions: []
+  mode: single
