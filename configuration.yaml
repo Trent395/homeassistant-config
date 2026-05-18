@@ -273,15 +273,15 @@ input_number:
     unit_of_measurement: min
     mode: box
     initial: 120
-  clothes_dryer_wrinkle_delay_seconds:
+  clothes_dryer_wrinkle_delay_minutes:
     name: Clothes Dryer Wrinkle Delay
     icon: mdi:iron
     min: 0
-    max: 86400
+    max: 1440
     step: 1
-    unit_of_measurement: s
+    unit_of_measurement: min
     mode: box
-    initial: 7200
+    initial: 120
   cat_feedings_since_midnight:
     name: Cat Feedings Since Midnight
     icon: mdi:counter

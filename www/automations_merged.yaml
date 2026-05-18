@@ -39,19 +39,11 @@
           - input_boolean.clothes_washer_waiting_for_dryer
           - input_boolean.clothes_washer_door_opened_since_cycle
           - input_boolean.clothes_washer_done_pending_ack
-          - input_boolean.clothes_dryer_done_pending_ack
-          - input_boolean.clothes_dryer_wrinkled
           - input_boolean.clothes_dryer_overdue
           - input_boolean.clothes_washer_mildewed
-    - action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.clothes_dryer_status
     - action: persistent_notification.dismiss
       data:
         notification_id: clothes_washer_done
-    - action: persistent_notification.dismiss
-      data:
-        notification_id: clothes_dryer_done
     - action: input_select.select_option
       target:
         entity_id: input_select.laundry_status
@@ -148,6 +140,9 @@
             - action: input_boolean.turn_on
               target:
                 entity_id: input_boolean.clothes_dryer_status
+            - action: input_boolean.turn_off
+              target:
+                entity_id: input_boolean.clothes_dryer_wrinkled
             - if:
                 - condition: state
                   entity_id: input_boolean.clothes_washer_waiting_for_dryer
@@ -303,7 +298,7 @@
         {% if finished_at in ['unknown', 'unavailable', 'none', 'None', ''] %}
           false
         {% else %}
-          {{ (as_timestamp(now()) - as_timestamp(finished_at)) >= (states('input_number.clothes_dryer_wrinkle_delay_seconds') | int(0)) }}
+          {{ (as_timestamp(now()) - as_timestamp(finished_at)) >= (states('input_number.clothes_dryer_wrinkle_delay_minutes') | int(120)) * 60 }}
         {% endif %}
     - condition: state
       entity_id: input_boolean.clothes_dryer_wrinkled
@@ -332,21 +327,33 @@
 
 - id: clothes_washer_mildewed
   alias: Clothes Washer Mildewed
-  description: Mark a wet washer load mildewed if the dryer has not started before the configured timeout.
+  description: >-
+    Mark a wet washer load mildewed when it has sat in the washer too long
+    after the wash cycle ended without the dryer starting. Compares current
+    time to clothes_washer_finished_at so the clock is anchored to when the
+    machine actually stopped, not to when any boolean was last toggled.
   triggers:
-    - trigger: state
-      entity_id: input_boolean.clothes_washer_waiting_for_dryer
-      to: "on"
-  conditions: []
-  actions:
-    - delay:
-        minutes: "{{ states('input_number.clothes_washer_mildew_delay_minutes') | int(120) }}"
+    - trigger: time_pattern
+      minutes: "/1"
+  conditions:
     - condition: state
       entity_id: input_boolean.clothes_washer_waiting_for_dryer
       state: "on"
     - condition: state
+      entity_id: input_boolean.clothes_washer_mildewed
+      state: "off"
+    - condition: state
       entity_id: binary_sensor.clothes_dryer_running
       state: "off"
+    - condition: template
+      value_template: >-
+        {% set finished_at = states('input_datetime.clothes_washer_finished_at') %}
+        {% if finished_at in ['unknown', 'unavailable', 'none', 'None', ''] %}
+          false
+        {% else %}
+          {{ (as_timestamp(now()) - as_timestamp(finished_at)) >= (states('input_number.clothes_washer_mildew_delay_minutes') | int(120)) * 60 }}
+        {% endif %}
+  actions:
     - action: input_boolean.turn_on
       target:
         entity_id:
@@ -367,7 +374,7 @@
       data:
         title: Washer Load Mildewed
         message: The washer load needs to be rewashed before drying.
-  mode: restart
+  mode: single
 
 - id: cat_feeder_scheduled_feedings
   alias: Cat Feeder Scheduled Feedings
