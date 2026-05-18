@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "header",
+      "type": "text",
+      "text": "# 🧺 Laundry State Machine\nAll possible states of `input_select.laundry_status` and the transitions between them.\nBoth machines are tracked simultaneously — dryer state persists independently of washer.",
+      "x": -340,
+      "y": -1900,
+      "width": 680,
+      "height": 80,
+      "color": "6"
+    },
+    {
+      "id": "idle",
+      "type": "text",
+      "text": "## 💤 Idle\n`laundry_status = Idle`\n\nAll flags OFF. No tracked load in either machine.\nSystem is quiescent.",
+      "x": -180,
+      "y": -1760,
+      "width": 360,
+      "height": 100,
+      "color": "3"
+    },
+    {
+      "id": "washing",
+      "type": "text",
+      "text": "## 🫧 Washing\n`laundry_status = Washing`\n`clothes_washer_cycle_active = ON`\n`clothes_washer_started_at` = cycle start\n\nTimers active:\n- `clothes_washer_cycle_elapsed` (min)\n- `clothes_washer_cycle_remaining` (min)",
+      "x": -180,
+      "y": -1560,
+      "width": 360,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "ready_to_dry",
+      "type": "text",
+      "text": "## 📦 Ready To Dry\n`laundry_status = Ready To Dry`\n`waiting_for_dryer = ON`\n`done_pending_ack = ON`\n`washer_finished_at` = when washing stopped\n\nMildew clock ticking: `now() − washer_finished_at`\nNotification active until dryer starts.",
+      "x": -180,
+      "y": -1280,
+      "width": 360,
+      "height": 170,
+      "color": "3"
+    },
+    {
+      "id": "mildewed",
+      "type": "text",
+      "text": "## 🤢 Mildewed\n`laundry_status = Mildewed`\n`clothes_washer_mildewed = ON`\n`clothes_dryer_overdue = ON`\n\nLoad sat in washer > `mildew_delay_minutes` without\nbeing dried. Must be rewashed before drying.\n\n**Fix:** start washer → goes back to Washing.",
+      "x": -620,
+      "y": -980,
+      "width": 360,
+      "height": 180,
+      "color": "1"
+    },
+    {
+      "id": "clothes_drying",
+      "type": "text",
+      "text": "## 🌀 Clothes Drying\n`laundry_status = Clothes Drying`\n`clothes_dryer_status = ON`\n`clothes_dryer_started_at` = cycle start\n\nTimers active:\n- `clothes_dryer_cycle_elapsed` (min)\n- `clothes_dryer_cycle_remaining` (min)\n\nSimultaneously: next wash load may be starting.",
+      "x": 200,
+      "y": -980,
+      "width": 360,
+      "height": 200,
+      "color": "5"
+    },
+    {
+      "id": "dry_and_hot",
+      "type": "text",
+      "text": "## ♨️ Clothes Dry And Hot\n`laundry_status = Clothes Dry And Hot`\n`done_pending_ack = ON`\n`dryer_finished_at` = when drying stopped\n\nWrinkle clock ticking: `now() − dryer_finished_at`\nNotification active. Fold now while still warm!",
+      "x": 200,
+      "y": -660,
+      "width": 360,
+      "height": 170,
+      "color": "3"
+    },
+    {
+      "id": "wrinkled",
+      "type": "text",
+      "text": "## 👕 Wrinkled\n`laundry_status = Wrinkled`\n`clothes_dryer_wrinkled = ON`\n\nLoad sat in dryer > `wrinkle_delay_minutes` without\nbeing folded. May need to re-tumble with damp cloth.\n\n**Fix:** press dryer door button → goes to Idle.",
+      "x": 200,
+      "y": -360,
+      "width": 360,
+      "height": 180,
+      "color": "1"
+    },
+    {
+      "id": "idle_end",
+      "type": "text",
+      "text": "## 💤 Idle\n(Return to idle after laundry handled)\n\n`done_pending_ack = OFF` · `wrinkled = OFF`\nTriggered by: dryer door button press\nor `script.acknowledge_clothes_dryer_done`",
+      "x": -180,
+      "y": -360,
+      "width": 360,
+      "height": 130,
+      "color": "3"
+    },
+    {
+      "id": "note_parallel",
+      "type": "text",
+      "text": "### ℹ️ Parallel Load Note\nThe dryer and washer track independently.\nStarting a new wash does **not** clear dryer state.\nIf a new wash starts while the dryer load is\nstill pending → both notifications coexist.\n\nWasher flags cleared on new wash start:\n`waiting_for_dryer`, `mildewed`, `overdue`\n\nDryer flags cleared on new dryer start:\n`done_pending_ack`, `dryer_wrinkled`",
+      "x": -620,
+      "y": -660,
+      "width": 360,
+      "height": 250,
+      "color": "6"
+    },
+    {
+      "id": "note_rewash",
+      "type": "text",
+      "text": "### 🔄 Rewash Rule\nIf washer runs again **without** the dryer having run\n→ treated as a **rewash of the same load**.\n`waiting_for_dryer` is turned off,\n`washer_started_at` resets to now,\nmildew state clears.\n\nIf washer runs after a complete wash+dry cycle\n→ treated as a **new load** (dryer state untouched).",
+      "x": -620,
+      "y": -1280,
+      "width": 360,
+      "height": 230,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_idle_washing",
+      "fromNode": "idle",
+      "fromSide": "bottom",
+      "toNode": "washing",
+      "toSide": "top",
+      "label": "washer_running ON for 15 min"
+    },
+    {
+      "id": "e_washing_ready",
+      "fromNode": "washing",
+      "fromSide": "bottom",
+      "toNode": "ready_to_dry",
+      "toSide": "top",
+      "label": "washer_running_sustained → OFF\n+ cycle_active = ON"
+    },
+    {
+      "id": "e_ready_mildewed",
+      "fromNode": "ready_to_dry",
+      "fromSide": "left",
+      "toNode": "mildewed",
+      "toSide": "top",
+      "label": "now − finished_at\n≥ mildew_delay_min",
+      "color": "1"
+    },
+    {
+      "id": "e_ready_drying",
+      "fromNode": "ready_to_dry",
+      "fromSide": "right",
+      "toNode": "clothes_drying",
+      "toSide": "top",
+      "label": "dryer starts\n(clears washer waiting state)",
+      "color": "4"
+    },
+    {
+      "id": "e_mildewed_washing",
+      "fromNode": "mildewed",
+      "fromSide": "top",
+      "toNode": "washing",
+      "toSide": "left",
+      "label": "washer starts again\n(rewash)",
+      "color": "4"
+    },
+    {
+      "id": "e_drying_dry",
+      "fromNode": "clothes_drying",
+      "fromSide": "bottom",
+      "toNode": "dry_and_hot",
+      "toSide": "top",
+      "label": "dryer_running → OFF\n+ dryer_status = ON"
+    },
+    {
+      "id": "e_dry_wrinkled",
+      "fromNode": "dry_and_hot",
+      "fromSide": "bottom",
+      "toNode": "wrinkled",
+      "toSide": "top",
+      "label": "now − finished_at\n≥ wrinkle_delay_min",
+      "color": "1"
+    },
+    {
+      "id": "e_dry_idle",
+      "fromNode": "dry_and_hot",
+      "fromSide": "left",
+      "toNode": "idle_end",
+      "toSide": "right",
+      "label": "dryer door button pressed",
+      "color": "4"
+    },
+    {
+      "id": "e_wrinkled_idle",
+      "fromNode": "wrinkled",
+      "fromSide": "left",
+      "toNode": "idle_end",
+      "toSide": "right",
+      "label": "dryer door button pressed",
+      "color": "4"
+    },
+    {
+      "id": "e_idle_end_idle",
+      "fromNode": "idle_end",
+      "fromSide": "top",
+      "toNode": "idle",
+      "toSide": "bottom",
+      "label": "loop back",
+      "color": "6"
+    },
+    {
+      "id": "e_parallel_note",
+      "fromNode": "note_parallel",
+      "fromSide": "right",
+      "toNode": "dry_and_hot",
+      "toSide": "left"
+    },
+    {
+      "id": "e_rewash_note",
+      "fromNode": "note_rewash",
+      "fromSide": "right",
+      "toNode": "ready_to_dry",
+      "toSide": "left"
+    }
+  ]
+}

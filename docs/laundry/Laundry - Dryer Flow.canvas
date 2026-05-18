@@ -1,0 +1,222 @@
+{
+  "nodes": [
+    {
+      "id": "header",
+      "type": "text",
+      "text": "# 🌀 Dryer Logic Flow\nComplete automation chain from vibration detection → cycle tracking → wrinkle alerting.",
+      "x": -220,
+      "y": -1900,
+      "width": 440,
+      "height": 64,
+      "color": "5"
+    },
+    {
+      "id": "vibration_sensor",
+      "type": "text",
+      "text": "### 📳 Vibration Sensor\n`binary_sensor.vibration_sensor_clothes_dryer`\nPhysical vibration sensor attached to dryer drum.\nReliable — drum vibrates continuously throughout the full cycle.\nNo presoak problem like the washer has.",
+      "x": -220,
+      "y": -1800,
+      "width": 440,
+      "height": 100,
+      "color": "5"
+    },
+    {
+      "id": "dryer_running",
+      "type": "text",
+      "text": "### 🌀 `binary_sensor.clothes_dryer_running`\nTemplate binary — ON when vibration sensor is ON.\n**delay_on:** `clothes_dryer_on_delay_seconds` (default 15s)\n**delay_off:** `clothes_dryer_off_delay_seconds` (default 120s)\nDelays prevent flicker at cycle start/end.",
+      "x": -220,
+      "y": -1656,
+      "width": 440,
+      "height": 110,
+      "color": "5"
+    },
+    {
+      "id": "cycle_started",
+      "type": "text",
+      "text": "## ▶️ Clothes Dryer Cycle Started\n**Triggers:** `clothes_dryer_running` → ON  |  HA startup (if already running)\n\n**Always does:**\n- `clothes_dryer_status = ON`\n- `clothes_dryer_started_at = now()`\n- `clothes_dryer_wrinkled = OFF` (new cycle clears old wrinkle state)\n- `clothes_dryer_done_pending_ack = OFF`\n- `laundry_status = Clothes Drying`\n\n**Additionally — if `waiting_for_dryer = ON`** (washer load going in):\n- `waiting_for_dryer = OFF`\n- `clothes_washer_mildewed = OFF`, `dryer_overdue = OFF`\n- `clothes_washer_done_pending_ack = OFF`\n- Dismiss washer notification",
+      "x": -220,
+      "y": -1490,
+      "width": 440,
+      "height": 260,
+      "color": "4"
+    },
+    {
+      "id": "washer_link",
+      "type": "text",
+      "text": "↩️ **Clears washer waiting state**\nWhen dryer starts with the wash load:\n`waiting_for_dryer = OFF` prevents mildew\ntimer from ever firing for that load.\n*(Washer side shown in Washer Flow canvas)*",
+      "x": 280,
+      "y": -1490,
+      "width": 300,
+      "height": 120,
+      "color": "6"
+    },
+    {
+      "id": "timers",
+      "type": "text",
+      "text": "### ⏱️ Cycle Timer Sensors\n`sensor.clothes_dryer_cycle_elapsed`\n→ `(now − started_at) / 60` min while running\n\n`sensor.clothes_dryer_cycle_remaining`\n→ `avg_cycle_min − elapsed`, floored at 0\n\n`input_number.clothes_dryer_avg_cycle_minutes`\nDefault 55 — updated each finished cycle via\n70/30 weighted blend with actual duration.",
+      "x": 280,
+      "y": -1340,
+      "width": 300,
+      "height": 196,
+      "color": "2"
+    },
+    {
+      "id": "active_state",
+      "type": "text",
+      "text": "📋 **State: Dryer active**\n`dryer_status = ON` · `dryer_started_at` = cycle start time\n`dryer_wrinkled = OFF` · `done_pending_ack = OFF`",
+      "x": -220,
+      "y": -1170,
+      "width": 440,
+      "height": 80,
+      "color": "3"
+    },
+    {
+      "id": "cycle_finished",
+      "type": "text",
+      "text": "## ⏹️ Clothes Dryer Cycle Finished\n**Trigger:** `clothes_dryer_running` → OFF\n**Condition:** `clothes_dryer_status = ON`\n*(Condition ensures only real cycles are counted, not manual restarts)*\n\n**Actions:**\n- `clothes_dryer_status = OFF`\n- `clothes_dryer_done_pending_ack = ON`\n- `clothes_dryer_finished_at = now()`\n- Update `avg_cycle_minutes`: `old×0.7 + actual×0.3`\n- `laundry_status = Clothes Dry And Hot`\n- Send persistent + push notification",
+      "x": -220,
+      "y": -1040,
+      "width": 440,
+      "height": 210,
+      "color": "4"
+    },
+    {
+      "id": "done_state",
+      "type": "text",
+      "text": "📋 **State: Dry load waiting to be folded**\n`done_pending_ack = ON` · `dryer_status = OFF`\n`dryer_finished_at` = time cycle actually ended\nWrinkle clock starts ticking from `dryer_finished_at`.",
+      "x": -220,
+      "y": -778,
+      "width": 440,
+      "height": 90,
+      "color": "3"
+    },
+    {
+      "id": "done_clear",
+      "type": "text",
+      "text": "### ✅ Clothes Dryer Done Clear\n**Trigger:** `input_button.clothes_dryer_door_opened`\n→ Calls `script.acknowledge_clothes_dryer_done`\n→ Clears `done_pending_ack`, `wrinkled`\n→ Dismisses dryer notification\n→ `laundry_status` set appropriately",
+      "x": 280,
+      "y": -1040,
+      "width": 300,
+      "height": 150,
+      "color": "4"
+    },
+    {
+      "id": "wrinkle_auto",
+      "type": "text",
+      "text": "## ⏰ Clothes Dryer Wrinkled\n**Trigger:** `time_pattern` — every 1 min (polling)\n\n**All three conditions must be true to fire:**\n1. `done_pending_ack = ON` — load is still in dryer\n2. `clothes_dryer_wrinkled = OFF` — hasn't fired yet\n3. `now() − dryer_finished_at ≥ wrinkle_delay_min × 60`\n   *(anchored to actual dry end time)*\n\n**Actions:** `dryer_wrinkled = ON`\n`laundry_status = Wrinkled`\nSend persistent + push notification",
+      "x": -220,
+      "y": -638,
+      "width": 440,
+      "height": 220,
+      "color": "4"
+    },
+    {
+      "id": "wrinkled_alert",
+      "type": "text",
+      "text": "## 🚨 WRINKLED\n`clothes_dryer_wrinkled = ON`\n\n📱 Push: *\"The dryer load has been sitting too long and is now marked wrinkled.\"*\n🖥️ Persistent: *\"Open the dryer and press the dryer door helper when the load is handled.\"*\n\nCleared when dryer door button pressed OR new dryer cycle starts.",
+      "x": -220,
+      "y": -368,
+      "width": 440,
+      "height": 130,
+      "color": "1"
+    },
+    {
+      "id": "config_inputs",
+      "type": "text",
+      "text": "### ⚙️ Key Configurable Inputs\n`clothes_dryer_wrinkle_delay_minutes` — default 120\n`clothes_dryer_avg_cycle_minutes` — default 55 (adaptive)\n`clothes_dryer_on_delay_seconds` — default 15\n`clothes_dryer_off_delay_seconds` — default 120",
+      "x": 280,
+      "y": -638,
+      "width": 300,
+      "height": 120,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e_vib_running",
+      "fromNode": "vibration_sensor",
+      "fromSide": "bottom",
+      "toNode": "dryer_running",
+      "toSide": "top",
+      "label": "vibration detected"
+    },
+    {
+      "id": "e_running_started",
+      "fromNode": "dryer_running",
+      "fromSide": "bottom",
+      "toNode": "cycle_started",
+      "toSide": "top",
+      "label": "ON → triggers"
+    },
+    {
+      "id": "e_started_washer",
+      "fromNode": "cycle_started",
+      "fromSide": "right",
+      "toNode": "washer_link",
+      "toSide": "left"
+    },
+    {
+      "id": "e_started_timers",
+      "fromNode": "cycle_started",
+      "fromSide": "right",
+      "toNode": "timers",
+      "toSide": "left",
+      "label": "started_at feeds"
+    },
+    {
+      "id": "e_started_active",
+      "fromNode": "cycle_started",
+      "fromSide": "bottom",
+      "toNode": "active_state",
+      "toSide": "top",
+      "label": "sets"
+    },
+    {
+      "id": "e_running_finished",
+      "fromNode": "dryer_running",
+      "fromSide": "bottom",
+      "toNode": "cycle_finished",
+      "toSide": "top",
+      "label": "OFF → triggers"
+    },
+    {
+      "id": "e_active_finished",
+      "fromNode": "active_state",
+      "fromSide": "bottom",
+      "toNode": "cycle_finished",
+      "toSide": "top",
+      "label": "dryer_status=ON enables condition"
+    },
+    {
+      "id": "e_finished_done",
+      "fromNode": "cycle_finished",
+      "fromSide": "bottom",
+      "toNode": "done_state",
+      "toSide": "top",
+      "label": "sets done state"
+    },
+    {
+      "id": "e_finished_clear",
+      "fromNode": "cycle_finished",
+      "fromSide": "right",
+      "toNode": "done_clear",
+      "toSide": "left"
+    },
+    {
+      "id": "e_done_wrinkle",
+      "fromNode": "done_state",
+      "fromSide": "bottom",
+      "toNode": "wrinkle_auto",
+      "toSide": "top",
+      "label": "done_pending_ack=ON enables"
+    },
+    {
+      "id": "e_wrinkle_alert",
+      "fromNode": "wrinkle_auto",
+      "fromSide": "bottom",
+      "toNode": "wrinkled_alert",
+      "toSide": "top",
+      "label": "timeout exceeded"
+    }
+  ]
+}
