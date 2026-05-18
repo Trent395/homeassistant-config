@@ -282,6 +282,33 @@ input_number:
     unit_of_measurement: min
     mode: box
     initial: 120
+  clothes_washer_presoak_gap_minutes:
+    name: Clothes Washer Presoak Gap
+    icon: mdi:timer-pause
+    min: 0
+    max: 120
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 30
+  clothes_washer_avg_cycle_minutes:
+    name: Clothes Washer Avg Cycle Time
+    icon: mdi:washing-machine
+    min: 10
+    max: 300
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 60
+  clothes_dryer_avg_cycle_minutes:
+    name: Clothes Dryer Avg Cycle Time
+    icon: mdi:tumble-dryer
+    min: 10
+    max: 300
+    step: 1
+    unit_of_measurement: min
+    mode: box
+    initial: 55
   cat_feedings_since_midnight:
     name: Cat Feedings Since Midnight
     icon: mdi:counter
@@ -455,6 +482,10 @@ input_number:
 input_datetime:
   clothes_washer_finished_at:
     name: Clothes Washer Finished At
+    has_date: true
+    has_time: true
+  clothes_washer_started_at:
+    name: Clothes Washer Started At
     has_date: true
     has_time: true
   clothes_dryer_started_at:
@@ -1138,6 +1169,58 @@ template:
           {{ snapshot if snapshot not in ['unknown', 'unavailable', 'none', 'None', ''] else 'No snapshot yet' }}
         attributes:
           captured_at: "{{ states('input_datetime.yolo_last_snapshot_at') }}"
+      - name: "Clothes Washer Cycle Elapsed"
+        unique_id: clothes_washer_cycle_elapsed
+        icon: mdi:timer-outline
+        unit_of_measurement: min
+        state: >-
+          {% set started = states('input_datetime.clothes_washer_started_at') %}
+          {% if not is_state('binary_sensor.clothes_washer_running', 'on') or started in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            0
+          {% else %}
+            {{ ((as_timestamp(now()) - as_timestamp(started)) / 60) | round(0) | int }}
+          {% endif %}
+
+      - name: "Clothes Dryer Cycle Elapsed"
+        unique_id: clothes_dryer_cycle_elapsed
+        icon: mdi:timer-outline
+        unit_of_measurement: min
+        state: >-
+          {% set started = states('input_datetime.clothes_dryer_started_at') %}
+          {% if not is_state('binary_sensor.clothes_dryer_running', 'on') or started in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            0
+          {% else %}
+            {{ ((as_timestamp(now()) - as_timestamp(started)) / 60) | round(0) | int }}
+          {% endif %}
+
+      - name: "Clothes Washer Cycle Remaining"
+        unique_id: clothes_washer_cycle_remaining
+        icon: mdi:timer-sand
+        unit_of_measurement: min
+        state: >-
+          {% set started = states('input_datetime.clothes_washer_started_at') %}
+          {% if not is_state('binary_sensor.clothes_washer_running', 'on') or started in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            0
+          {% else %}
+            {% set elapsed = (as_timestamp(now()) - as_timestamp(started)) / 60 %}
+            {% set avg = states('input_number.clothes_washer_avg_cycle_minutes') | float(60) %}
+            {{ [avg - elapsed, 0] | max | round(0) | int }}
+          {% endif %}
+
+      - name: "Clothes Dryer Cycle Remaining"
+        unique_id: clothes_dryer_cycle_remaining
+        icon: mdi:timer-sand
+        unit_of_measurement: min
+        state: >-
+          {% set started = states('input_datetime.clothes_dryer_started_at') %}
+          {% if not is_state('binary_sensor.clothes_dryer_running', 'on') or started in ['unknown', 'unavailable', 'none', 'None', ''] %}
+            0
+          {% else %}
+            {% set elapsed = (as_timestamp(now()) - as_timestamp(started)) / 60 %}
+            {% set avg = states('input_number.clothes_dryer_avg_cycle_minutes') | float(55) %}
+            {{ [avg - elapsed, 0] | max | round(0) | int }}
+          {% endif %}
+
       - name: "Laundry Washer Button"
         unique_id: laundry_washer_button
         icon: >-
@@ -1150,7 +1233,9 @@ template:
           {% if is_state('input_boolean.clothes_washer_mildewed', 'on') %}
             Off | Mildewed: rewash
           {% elif is_state('binary_sensor.clothes_washer_running', 'on') %}
-            On | Washing
+            {% set elapsed = states('sensor.clothes_washer_cycle_elapsed') | int(0) %}
+            {% set remaining = states('sensor.clothes_washer_cycle_remaining') | int(0) %}
+            On | {{ elapsed }} min elapsed, ~{{ remaining }} min left
           {% elif is_state('input_boolean.clothes_washer_waiting_for_dryer', 'on') and is_state('binary_sensor.clothes_dryer_running', 'on') %}
             Off | Waiting on dryer
           {% elif is_state('input_boolean.clothes_washer_waiting_for_dryer', 'on') %}
@@ -1173,6 +1258,9 @@ template:
             {% else %}
               No wet load
             {% endif %}
+          elapsed_minutes: "{{ states('sensor.clothes_washer_cycle_elapsed') | int(0) }}"
+          remaining_minutes: "{{ states('sensor.clothes_washer_cycle_remaining') | int(0) }}"
+          avg_cycle_minutes: "{{ states('input_number.clothes_washer_avg_cycle_minutes') | int(60) }}"
           action_needed: >-
             {{ is_state('input_boolean.clothes_washer_waiting_for_dryer', 'on') or is_state('input_boolean.clothes_washer_mildewed', 'on') }}
 
@@ -1188,7 +1276,9 @@ template:
           {% if is_state('input_boolean.clothes_dryer_wrinkled', 'on') %}
             Off | Wrinkled: redry
           {% elif is_state('binary_sensor.clothes_dryer_running', 'on') %}
-            On | Clothes drying
+            {% set elapsed = states('sensor.clothes_dryer_cycle_elapsed') | int(0) %}
+            {% set remaining = states('sensor.clothes_dryer_cycle_remaining') | int(0) %}
+            On | {{ elapsed }} min elapsed, ~{{ remaining }} min left
           {% elif is_state('input_boolean.clothes_dryer_done_pending_ack', 'on') %}
             Off | Dry hot - fold now
           {% else %}
@@ -1207,6 +1297,9 @@ template:
             {% else %}
               Idle
             {% endif %}
+          elapsed_minutes: "{{ states('sensor.clothes_dryer_cycle_elapsed') | int(0) }}"
+          remaining_minutes: "{{ states('sensor.clothes_dryer_cycle_remaining') | int(0) }}"
+          avg_cycle_minutes: "{{ states('input_number.clothes_dryer_avg_cycle_minutes') | int(55) }}"
           action_needed: >-
             {{ is_state('input_boolean.clothes_dryer_done_pending_ack', 'on') or is_state('input_boolean.clothes_dryer_wrinkled', 'on') }}
 
@@ -1230,6 +1323,11 @@ template:
         attributes:
           current_power_watts: "{{ states('sensor.ac_power_outlet_monitor_1_washing_machine_power') }}"
           threshold_watts: "{{ states('input_number.clothes_washer_power_threshold_watts') }}"
+      - name: "Clothes Washer Running Sustained"
+        unique_id: clothes_washer_running_sustained
+        icon: mdi:washing-machine
+        delay_off: "{{ (states('input_number.clothes_washer_presoak_gap_minutes') | int(30)) * 60 }}"
+        state: "{{ is_state('binary_sensor.clothes_washer_running', 'on') }}"
       - name: "Cat Feeder Unavailable"
         unique_id: cat_feeder_unavailable
         icon: mdi:lan-disconnect

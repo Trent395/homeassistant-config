@@ -33,6 +33,11 @@
     - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.clothes_washer_cycle_active
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.clothes_washer_started_at
+      data:
+        datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
     - action: input_boolean.turn_off
       target:
         entity_id:
@@ -53,10 +58,13 @@
 
 - id: clothes_washer_cycle_finished
   alias: Clothes Washer Cycle Finished
-  description: Notify when the washer finishes and wait for the dryer to start.
+  description: >-
+    Notify when the washer finishes and wait for the dryer to start.
+    Uses clothes_washer_running_sustained (delay_off = presoak_gap_minutes) so a
+    quiet presoak gap does not falsely end the cycle.
   triggers:
     - trigger: state
-      entity_id: binary_sensor.clothes_washer_running
+      entity_id: binary_sensor.clothes_washer_running_sustained
       to: "off"
   conditions:
     - condition: state
@@ -79,6 +87,21 @@
         entity_id: input_datetime.clothes_washer_finished_at
       data:
         datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - variables:
+        started: "{{ states('input_datetime.clothes_washer_started_at') }}"
+    - if:
+        - condition: template
+          value_template: >-
+            {{ started not in ['unknown', 'unavailable', 'none', 'None', ''] }}
+      then:
+        - variables:
+            elapsed_min: "{{ ((as_timestamp(now()) - as_timestamp(started)) / 60) | round(0) | int }}"
+            old_avg: "{{ states('input_number.clothes_washer_avg_cycle_minutes') | float(60) }}"
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.clothes_washer_avg_cycle_minutes
+          data:
+            value: "{{ ((old_avg * 0.7) + (elapsed_min * 0.3)) | round(0) | int }}"
     - action: input_select.select_option
       target:
         entity_id: input_select.laundry_status
@@ -236,6 +259,21 @@
         entity_id: input_datetime.clothes_dryer_finished_at
       data:
         datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+    - variables:
+        started: "{{ states('input_datetime.clothes_dryer_started_at') }}"
+    - if:
+        - condition: template
+          value_template: >-
+            {{ started not in ['unknown', 'unavailable', 'none', 'None', ''] }}
+      then:
+        - variables:
+            elapsed_min: "{{ ((as_timestamp(now()) - as_timestamp(started)) / 60) | round(0) | int }}"
+            old_avg: "{{ states('input_number.clothes_dryer_avg_cycle_minutes') | float(55) }}"
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.clothes_dryer_avg_cycle_minutes
+          data:
+            value: "{{ ((old_avg * 0.7) + (elapsed_min * 0.3)) | round(0) | int }}"
     - action: input_select.select_option
       target:
         entity_id: input_select.laundry_status
