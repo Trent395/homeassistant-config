@@ -1,17 +1,21 @@
 #!/bin/sh
+HA_URL="http://100.91.124.23:8123"
 EXT_DIR="$HOME/.config/chromium/hide-cursor-extension"
-(
-  sleep 3
-  while true; do
-    for url in \
-      "http://jetson-orin-nano.swordfish-kelvin.ts.net:8123"; do
-      curl -fsSL --connect-timeout 4 --max-time 12 -o /dev/null "$url" >/dev/null 2>&1 || true
-    done
-    sleep 45
-  done
-) &
+
+# Wait up to 60s for HA to be reachable before opening Chromium
+i=0
+while [ $i -lt 60 ]; do
+  curl -fsSL --connect-timeout 2 --max-time 4 -o /dev/null "$HA_URL" 2>/dev/null && break
+  sleep 1
+  i=$((i + 1))
+done
+
 exec chromium \
   --enable-remote-extensions \
+  --enable-wayland-ime \
+  --wayland-text-input-version=3 \
+  --force-dark-mode \
+  --enable-features=WebContentsForceDark \
   --disable-extensions-except="$EXT_DIR" \
   --load-extension="$EXT_DIR" \
   --kiosk \
@@ -25,4 +29,4 @@ exec chromium \
   --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' \
   --touch-events=enabled \
   --ozone-platform=wayland \
-  http://127.0.0.1:8081/
+  "${HA_URL}/desktop-tablet"
