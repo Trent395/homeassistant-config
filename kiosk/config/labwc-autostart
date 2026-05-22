@@ -1,0 +1,28 @@
+#!/bin/sh
+EXT_DIR="$HOME/.config/chromium/hide-cursor-extension"
+(
+  sleep 3
+  while true; do
+    for url in \
+      "http://jetson-orin-nano.swordfish-kelvin.ts.net:8123"; do
+      curl -fsSL --connect-timeout 4 --max-time 12 -o /dev/null "$url" >/dev/null 2>&1 || true
+    done
+    sleep 45
+  done
+) &
+exec chromium \
+  --enable-remote-extensions \
+  --disable-extensions-except="$EXT_DIR" \
+  --load-extension="$EXT_DIR" \
+  --kiosk \
+  --noerrdialogs \
+  --disable-infobars \
+  --no-first-run \
+  --disable-features=ChromeWhatsNewUI,PrivacySandboxSettings4,Translate \
+  --overscroll-history-navigation=0 \
+  --disable-sync \
+  --no-default-browser-check \
+  --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' \
+  --touch-events=enabled \
+  --ozone-platform=wayland \
+  http://127.0.0.1:8081/

@@ -1,0 +1,10 @@
+{
+  "apps": [
+    {
+      "id": "homeassistant",
+      "name": "Home Assistant",
+      "description": "Jetson Home Assistant",
+      "target": "http://100.91.124.23:8123/desktop-tablet"
+    }
+  ]
+}

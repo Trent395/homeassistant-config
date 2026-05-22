@@ -1,0 +1,153 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.shell {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.boot-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(92, 173, 255, 0.22), transparent 28%),
+        linear-gradient(180deg, #09111b 0%, #02060b 52%, #000 100%);
+    transition: opacity 280ms ease;
+}
+
+.boot-splash.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.boot-splash-mark {
+    width: 108px;
+    height: 108px;
+    border-radius: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(125, 211, 252, 0.35);
+    background: rgba(9, 18, 28, 0.86);
+    color: #eef6ff;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+}
+
+.boot-splash-title {
+    color: #d8ecff;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.slides {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+}
+
+.slide {
+    min-width: 100vw;
+    width: 100vw;
+    height: 100vh;
+}
+
+.app-frame {
+    /* 110vw/110vh gives iframes an 880px logical width on this 800px display,
+       crossing HA/Nextcloud tablet breakpoints. scale(0.9091) fits it back. */
+    width: 110vw;
+    height: 110vh;
+    border: 0;
+    background: #000;
+    transform: scale(0.9091);
+    transform-origin: top left;
+}
+
+.gesture-zone {
+    position: fixed;
+    z-index: 1000;
+    background: transparent;
+    touch-action: pan-y;
+    height: 100vh;
+}
+
+.gesture-zone-left {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: clamp(96px, 14vw, 144px);
+    clip-path: polygon(88px 0, 100% 0, 100% 100%, 0 100%, 0 88px, 88px 88px);
+}
+
+.gesture-zone-right {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: clamp(96px, 14vw, 144px);
+}
+
+.status-pill {
+    position: fixed;
+    left: 50%;
+    z-index: 1100;
+    transform: translateX(-50%);
+}
+
+.status-pill {
+    border-radius: 999px;
+    background: rgba(8, 12, 18, 0.82);
+    color: #eef6ff;
+    border: 1px solid rgba(125, 211, 252, 0.28);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.status-pill {
+    top: 14px;
+    padding: 9px 14px;
+    opacity: 0;
+    transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.status-pill.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.empty-state {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 24px;
+    background: #02060b;
+}

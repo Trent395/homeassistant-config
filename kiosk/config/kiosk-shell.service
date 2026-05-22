@@ -1,0 +1,14 @@
+[Unit]
+Description=Pi Kiosk Shell Static Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/kiosk-shell
+ExecStart=/usr/bin/node %h/kiosk-shell/server.js
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

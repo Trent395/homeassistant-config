@@ -1,0 +1,14 @@
+{
+  "name": "kiosk-shell",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local kiosk shell with swipe navigation and app proxying",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3"
+  }
+}

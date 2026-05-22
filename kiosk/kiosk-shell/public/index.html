@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Kiosk Shell</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="shell">
+        <div id="boot-splash" class="boot-splash">
+            <div class="boot-splash-mark">SF</div>
+            <div class="boot-splash-title">Swordfish</div>
+        </div>
+        <div id="slides" class="slides"></div>
+        <div id="status-pill" class="status-pill hidden"></div>
+        <div class="gesture-zone gesture-zone-left" id="gesture-left"></div>
+        <div class="gesture-zone gesture-zone-right" id="gesture-right"></div>
+        <div id="empty-state" class="empty-state hidden">
+            <h1>No apps configured</h1>
+            <p>Add apps to <code>apps.json</code>.</p>
+        </div>
+    </main>
+    <script src="/app.js"></script>
+</body>
+</html>
